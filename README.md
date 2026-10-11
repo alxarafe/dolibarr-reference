@@ -83,16 +83,59 @@ open http://127.0.0.1:48240/api/index.php
 - `Api` — REST API (module key: `Api`)
 - `Societe` — Third Parties (module key: `Societe`)
 
-## API Key
+## REST API Authentication
 
-To obtain an API key for the REST API:
+The environment automatically provisions a valid REST API credential for the `admin` user during initialization (via `docker-init.d` mechanism). No manual steps required.
 
-1. Log into Dolibarr web UI
-2. Go to **Setup → Security → API Keys**
-3. Create a new key for the `admin` user (or a dedicated API user)
-4. Use the key in `Authorization: Bearer <key>` header
+### Development Usage
 
-Automation of API key provisioning is deferred to a future task.
+After `./bin/reset` or `./bin/up`, the API key is available:
+
+- **If `DOLIBARR_REFERENCE_API_KEY` is set in `.env`**: That key is used (persistent across resets)
+- **If not set**: A secure random key is generated on each reset (ephemeral)
+
+To view the current key:
+
+```bash
+./bin/status
+# Shows masked key and retrieval instructions
+```
+
+Or from container logs:
+
+```bash
+docker compose logs dolibarr | grep 'provision-api-key'
+```
+
+### Making Authenticated Requests
+
+Use the `DOLAPIKEY` header (not query string, not Bearer token):
+
+```bash
+curl -H "DOLAPIKEY: <your-key>" -H "Accept: application/json" \
+  http://127.0.0.1:48240/api/index.php/users/info
+```
+
+Expected response: **HTTP 200** with valid JSON containing the authenticated user information.
+
+### Validation
+
+`./bin/check` performs a full clean-room validation:
+
+1. Generates an ephemeral API key
+2. Starts fresh database + Dolibarr
+3. Provisions the key via Dolibarr's business layer (User class)
+4. Tests **positive case**: valid key → HTTP 200 + valid JSON
+5. Tests **negative case**: invalid key → HTTP 401
+6. Cleans up all containers and volumes
+
+### Security Notes
+
+- **Never commit real API keys** to version control
+- `.env` is gitignored; only `.env.example` is tracked
+- `bin/check` uses ephemeral keys that are destroyed after validation
+- Keys are masked in logs and status output (first 8 / last 4 chars visible)
+- Generate keys with: `openssl rand -hex 32`
 
 ## License
 

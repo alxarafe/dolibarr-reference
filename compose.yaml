@@ -39,8 +39,10 @@ services:
       DOLI_PROD: 1
       DOLI_AUTH: dolibarr
       DOLI_CRON_KEY: ${CRON_KEY:-}
+      DOLIBARR_REFERENCE_API_KEY: ${DOLIBARR_REFERENCE_API_KEY:-}
     volumes:
       - dolibarr_documents:/var/www/documents
+      - ./scripts/docker-init.d:/var/www/scripts/docker-init.d:ro
     ports:
       - "127.0.0.1:${DOLIBARR_REFERENCE_PORT:-48240}:80"
     depends_on:

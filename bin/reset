@@ -17,6 +17,33 @@ fi
 
 export DOLIBARR_REFERENCE_PORT="${DOLIBARR_REFERENCE_PORT:-48240}"
 
+# Ensure DOLIBARR_REFERENCE_API_KEY is set and persisted in .env
+if [[ -z "${DOLIBARR_REFERENCE_API_KEY:-}" ]]; then
+    # Generate a secure random API key
+    GENERATED_KEY=$(openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | xxd -p -c 32)
+    export DOLIBARR_REFERENCE_API_KEY="$GENERATED_KEY"
+
+    # Persist to .env (create if missing, preserve existing content)
+    if [[ ! -f "$PROJECT_ROOT/.env" ]]; then
+        # Create .env from .env.example if it exists, otherwise create minimal
+        if [[ -f "$PROJECT_ROOT/.env.example" ]]; then
+            cp "$PROJECT_ROOT/.env.example" "$PROJECT_ROOT/.env"
+        else
+            touch "$PROJECT_ROOT/.env"
+        fi
+    fi
+    # Update or add the key in .env
+    if grep -q "^DOLIBARR_REFERENCE_API_KEY=" "$PROJECT_ROOT/.env"; then
+        sed -i "s/^DOLIBARR_REFERENCE_API_KEY=.*/DOLIBARR_REFERENCE_API_KEY=$GENERATED_KEY/" "$PROJECT_ROOT/.env"
+    else
+        echo "DOLIBARR_REFERENCE_API_KEY=$GENERATED_KEY" >> "$PROJECT_ROOT/.env"
+    fi
+    # Ensure reasonable permissions
+    chmod 600 "$PROJECT_ROOT/.env" 2>/dev/null || true
+fi
+
+export DOLIBARR_REFERENCE_API_KEY
+
 echo "=== RESET: Dolibarr Reference Environment ==="
 echo "WARNING: This will DESTROY all laboratory data (database and documents)."
 echo "This operation is IRREVERSIBLE for this environment."
@@ -89,6 +116,11 @@ echo ""
 echo "Default credentials (from .env or defaults):"
 echo "  Login: ${ADMIN_LOGIN:-admin}"
 echo "  Password: (see .env or .env.example)"
+echo ""
+echo "REST API Authentication:"
+masked_key="${DOLIBARR_REFERENCE_API_KEY:0:8}****${DOLIBARR_REFERENCE_API_KEY: -4}"
+echo "  DOLAPIKEY: ${masked_key}"
+echo "  (Full key stored in .env)"
 echo ""
 echo "Database version:"
 docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null || echo "  Unable to query"

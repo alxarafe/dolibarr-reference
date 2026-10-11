@@ -22,12 +22,17 @@ set -a
 source "$ENV_FILE"
 set +a
 
+# Generate ephemeral API key for this check run
+EPHEMERAL_API_KEY=$(openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | xxd -p -c 32)
+
 # Use a different port for isolated check to avoid conflicts
 export DOLIBARR_REFERENCE_PORT="48241"
 export COMPOSE_PROJECT_NAME="$CHECK_PROJECT"
+export DOLIBARR_REFERENCE_API_KEY="$EPHEMERAL_API_KEY"
 
 echo "=== Dolibarr Reference Environment Validation ==="
 echo "Isolated project: $CHECK_PROJECT"
+echo "Ephemeral API key: ${EPHEMERAL_API_KEY:0:8}****${EPHEMERAL_API_KEY: -4}"
 echo ""
 
 cleanup() {
@@ -48,11 +53,11 @@ cleanup() {
 trap cleanup EXIT
 
 # Fresh database: start MariaDB
-echo "1/8 Starting MariaDB..."
+echo "1/10 Starting MariaDB..."
 docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" up -d database
 
 # Wait for database readiness
-echo "2/8 Waiting for database readiness..."
+echo "2/10 Waiting for database readiness..."
 timeout=120
 elapsed=0
 while [[ $elapsed -lt $timeout ]]; do
@@ -71,11 +76,11 @@ if [[ $elapsed -ge $timeout ]]; then
 fi
 
 # Start Dolibarr
-echo "3/8 Starting Dolibarr..."
+echo "3/10 Starting Dolibarr..."
 docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" up -d dolibarr
 
 # Wait for Dolibarr automatic installation and web readiness
-echo "4/8 Waiting for Dolibarr installation and web readiness..."
+echo "4/10 Waiting for Dolibarr installation and web readiness..."
 timeout=240
 elapsed=0
 while [[ $elapsed -lt $timeout ]]; do
@@ -97,8 +102,19 @@ fi
 DB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q database)
 WEB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q dolibarr)
 
+# Resolve Dolibarr database prefix from conf.php
+# Use PHP to reliably parse the configuration file
+DB_PREFIX=$(docker exec "$WEB_CONTAINER" php -r "
+require '/var/www/html/conf/conf.php';
+echo \$dolibarr_main_db_prefix ?? 'llx_';
+" 2>/dev/null | tr -d '\r\n')
+if [[ -z "$DB_PREFIX" ]]; then
+    DB_PREFIX="llx_"
+fi
+echo "   Database prefix: $DB_PREFIX"
+
 # Verify HTTP response
-echo "5/8 Verifying HTTP response..."
+echo "5/10 Verifying HTTP response..."
 if ! curl -fsS "http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/" >/dev/null; then
     echo "   ERROR: HTTP request failed" >&2
     exit 1
@@ -106,7 +122,7 @@ fi
 echo "   HTTP 200 OK"
 
 # Verify expected Dolibarr installation
-echo "6/8 Verifying Dolibarr installation..."
+echo "6/10 Verifying Dolibarr installation..."
 dolibarr_version=$(docker exec "$WEB_CONTAINER" grep "define('DOL_MINOR_VERSION'" /var/www/html/version.inc.php 2>/dev/null | sed "s/.*'DOL_MINOR_VERSION', '\([^']*\)'.*/\1/" | tr -d '\r\n' || echo "unknown")
 # Reconstruct full version from major.minor
 dolibarr_version="24.${dolibarr_version}"
@@ -117,8 +133,8 @@ fi
 echo "   Version: $dolibarr_version"
 
 # Verify own-company initialization
-echo "7/8 Verifying company initialization..."
-company_name=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM llx_const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+echo "7/10 Verifying company initialization..."
+company_name=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
 if [[ "$company_name" != "Alxarafe Reference" ]]; then
     echo "   ERROR: Company name mismatch: '$company_name' (expected 'Alxarafe Reference')" >&2
     exit 1
@@ -126,8 +142,8 @@ fi
 echo "   Company: $company_name"
 
 # Verify REST module is enabled
-echo "8/8 Verifying REST API module..."
-api_enabled=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM llx_const WHERE name='MAIN_MODULE_API' AND value='1';" 2>/dev/null | tr -d '\r\n' || echo "0")
+echo "8/10 Verifying REST API module..."
+api_enabled=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM ${DB_PREFIX}const WHERE name='MAIN_MODULE_API' AND value='1';" 2>/dev/null | tr -d '\r\n' || echo "0")
 if [[ "$api_enabled" != "1" ]]; then
     echo "   ERROR: REST API module not enabled" >&2
     exit 1
@@ -135,23 +151,60 @@ fi
 echo "   REST API module: enabled"
 
 # Verify Third Parties module is enabled
-societe_enabled=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM llx_const WHERE name='MAIN_MODULE_SOCIETE' AND value='1';" 2>/dev/null | tr -d '\r\n' || echo "0")
+societe_enabled=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM ${DB_PREFIX}const WHERE name='MAIN_MODULE_SOCIETE' AND value='1';" 2>/dev/null | tr -d '\r\n' || echo "0")
 if [[ "$societe_enabled" != "1" ]]; then
     echo "   ERROR: Third Parties (Societe) module not enabled" >&2
     exit 1
 fi
 echo "   Third Parties module: enabled"
 
-# Verify API Explorer is reachable
-echo "   Verifying API Explorer..."
-if ! curl -fsS "http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/api/index.php" | grep -qi "api explorer\|dolibarr api\|rest api"; then
-    echo "   WARNING: API Explorer may not be fully accessible (checking content)"
-    # Don't fail on this, just warn
-else
-    echo "   API Explorer: reachable"
+# Verify authenticated REST request works
+# (functional test also proves API key was provisioned and works)
+echo "9/10 Testing authenticated REST API access..."
+BASE_URL="http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}"
+
+# Positive test: valid API key
+# Use /users/info endpoint which returns 200 with current user info when authenticated
+echo "   Testing valid API key (expecting HTTP 200)..."
+response=$(curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${EPHEMERAL_API_KEY}" -H "Accept: application/json" "${BASE_URL}/api/index.php/users/info" 2>/dev/null || echo -e "\n000")
+http_code=$(echo "$response" | tail -1)
+body=$(echo "$response" | head -n -1)
+
+if [[ "$http_code" != "200" ]]; then
+    echo "   ERROR: Expected HTTP 200, got HTTP $http_code" >&2
+    echo "   Response: $body" >&2
+    exit 1
 fi
 
-# Verify MariaDB version
+# Validate JSON response
+if ! echo "$body" | jq -e . >/dev/null 2>&1; then
+    echo "   ERROR: Response is not valid JSON" >&2
+    echo "   Response: $body" >&2
+    exit 1
+fi
+
+# Verify authenticated user matches expected admin login
+expected_login="${ADMIN_LOGIN:-admin}"
+actual_login=$(echo "$body" | jq -r '.login // empty' 2>/dev/null || echo "")
+if [[ "$actual_login" != "$expected_login" ]]; then
+    echo "   ERROR: Expected login '$expected_login', got '$actual_login'" >&2
+    exit 1
+fi
+echo "   HTTP 200 OK - Valid JSON, authenticated user: $actual_login"
+
+# Negative test: invalid API key (same endpoint)
+echo "   Testing invalid API key (expecting HTTP 401)..."
+invalid_key="invalid-key-$(openssl rand -hex 16 2>/dev/null || head -c 16 /dev/urandom | xxd -p -c 16)"
+response=$(curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${invalid_key}" -H "Accept: application/json" "${BASE_URL}/api/index.php/users/info" 2>/dev/null || echo -e "\n000")
+http_code=$(echo "$response" | tail -1)
+
+if [[ "$http_code" != "401" ]]; then
+    echo "   ERROR: Expected HTTP 401 for invalid key, got HTTP $http_code" >&2
+    exit 1
+fi
+echo "   HTTP 401 Unauthorized - Correctly rejects invalid key"
+
+echo ""
 mariadb_version=$(docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | head -1 || echo "unknown")
 echo "   MariaDB: $mariadb_version"
 
@@ -168,3 +221,4 @@ fi
 echo ""
 echo "=== All Checks Passed ==="
 echo "Dolibarr $dolibarr_version operational with REST API and Third Parties modules."
+echo "REST authentication validated: valid key -> 200, invalid key -> 401"

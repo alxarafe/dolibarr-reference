@@ -33,6 +33,11 @@ echo "API Explorer: http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/api/index.php"
 echo "Company: ${COMPANY_NAME:-Alxarafe Reference}"
 echo "Country: ${COMPANY_COUNTRYCODE:-ES}"
 echo "Modules: ${ENABLE_MODULES:-Api,Societe}"
+echo ""
+echo "--- REST API ---"
+masked_key="${DOLIBARR_REFERENCE_API_KEY:0:8}****${DOLIBARR_REFERENCE_API_KEY: -4}"
+echo "  Authentication: DOLAPIKEY header"
+echo "  API Credential: configured (${masked_key})"
 
 # Get container IDs
 DB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" ps -q database 2>/dev/null || true)
