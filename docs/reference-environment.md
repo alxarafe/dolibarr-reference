@@ -69,9 +69,12 @@ This initial bootstrap delivers:
 - ✅ Company "Alxarafe Reference" (ES) configured
 - ✅ REST API module (`Api`) enabled
 - ✅ Third Parties module (`Societe`) enabled
+- ✅ User module (`User`) enabled
 - ✅ API Explorer accessible at `/api/index.php`
 - ✅ Reproducible `bin/check` validation in isolated project namespace
 - ✅ Loopback-only exposure on configurable port (default 48240)
+- ✅ Technical reference capture (`bin/capture-technical`) — Swagger 2.0 descriptor, API inventory, technical metadata
+- ✅ Drift detection in `bin/check` against committed baseline
 
 ## Out of Scope (Future Tasks)
 
@@ -83,6 +86,69 @@ This initial bootstrap delivers:
 - Differential test framework
 - OpenAPI schema extraction
 - Custom Dolibarr PHP bridge or image
+
+## Technical Reference Capture (DOL-REF-002)
+
+The reference environment captures a **deterministic, versioned technical contract** of the Dolibarr 24.0.1 baseline. This is the *observable API contract*, not a functional characterization.
+
+### Artifacts (`reference/baseline/`)
+
+| Artifact | Purpose |
+|----------|---------|
+| `swagger.json` | Normalized Swagger 2.0 descriptor (deterministic: no `host`, sorted keys) |
+| `api-inventory.tsv` | Sorted operation inventory: METHOD, PATH, OPERATION_ID, TAGS |
+| `technical-reference.json` | Machine-readable metadata: versions, modules, DB, entity, descriptor stats, SHA-256 |
+| `PROVENANCE.md` | Origin, licensing (GPL-3.0-or-later for Swagger), regeneration instructions |
+
+### Captured Metadata
+
+| Category | Fields |
+|----------|--------|
+| Dolibarr | version, source commit, image + digest |
+| MariaDB | version, image + digest, charset, collation, table count |
+| Database | configured prefix (`llx_` observed, not hardcoded) |
+| Entity | company name, country code |
+| Modules | enabled: `Api`, `Societe`, `User` (queried from DB, not assumed) |
+| API Config | whitelisted constants (`API_*`, `MAIN_LANG_DEFAULT`) |
+| Descriptor | type (Swagger 2.0), basePath, path/op/tag/def counts, SHA-256 |
+
+### Key Principles
+
+1. **Not `Dolibarr 24.0.1 API`** — Described as `Dolibarr 24.0.1 baseline reference profile with the modules and configuration captured in this repository`
+2. **Modules drive the descriptor** — Swagger content depends on enabled modules; the capture records the actual active set
+3. **No secrets** — API keys, passwords, tokens never appear in artifacts; capture fails if detected
+4. **Normalization only for environmental variance** — `host` removed (differs between dev/check); contractual data (paths, schemas, operations) preserved exactly
+5. **Determinism required** — Two consecutive captures = identical artifacts; `bin/check` enforces this
+
+### Regeneration
+
+```bash
+./bin/reset
+./bin/up
+./bin/capture-technical
+```
+
+### Drift Handling
+
+`bin/check` compares generated artifacts against committed baseline:
+- **Match** → PASS
+- **Drift** → FAIL with diff; human must review and decide
+
+Do **not** auto-update baseline on drift. Contractual changes require explicit decision.
+
+### Relationship to Alixar
+
+```
+Dolibarr Swagger (this capture)
+         ↓
+Technical evidence
+         ↓
+Future: Functional characterization
+         ↓
+Future: Alixar canonical contract
+```
+
+This task does **not** design the Alixar API. It captures the Dolibarr contract as evidence for later analysis.
 
 ## Reproducibility Guarantees
 

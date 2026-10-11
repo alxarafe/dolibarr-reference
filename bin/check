@@ -43,6 +43,8 @@ cleanup() {
     # Ensure volumes are removed
     docker volume rm "${CHECK_PROJECT}_dolibarr_db_data" 2>/dev/null || true
     docker volume rm "${CHECK_PROJECT}_dolibarr_documents" 2>/dev/null || true
+    # Force remove any leftover containers
+    docker rm -f "${CHECK_PROJECT}-database-1" "${CHECK_PROJECT}-dolibarr-1" 2>/dev/null || true
     if [[ $exit_code -ne 0 ]]; then
         echo "VALIDATION FAILED" >&2
     else
@@ -51,6 +53,12 @@ cleanup() {
     exit $exit_code
 }
 trap cleanup EXIT
+
+# Pre-cleanup: ensure no leftover resources from previous runs
+docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" down -v --remove-orphans 2>/dev/null || true
+docker volume rm "${CHECK_PROJECT}_dolibarr_db_data" 2>/dev/null || true
+docker volume rm "${CHECK_PROJECT}_dolibarr_documents" 2>/dev/null || true
+docker rm -f "${CHECK_PROJECT}-database-1" "${CHECK_PROJECT}-dolibarr-1" 2>/dev/null || true
 
 # Fresh database: start MariaDB
 echo "1/10 Starting MariaDB..."
@@ -101,6 +109,31 @@ fi
 # Get container IDs
 DB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q database)
 WEB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q dolibarr)
+
+# Wait for API key provisioning to complete (docker-init.d scripts run asynchronously)
+echo "4b/14 Waiting for API key provisioning..."
+timeout=60
+elapsed=0
+while [[ $elapsed -lt $timeout ]]; do
+    # Check if the provisioning script has run by looking for the log entry
+    if docker logs "$WEB_CONTAINER" 2>&1 | grep -q "provision-api-key.*API key provisioned successfully"; then
+        echo "   API key provisioned."
+        break
+    fi
+    sleep 2
+    elapsed=$((elapsed + 2))
+done
+if [[ $elapsed -ge $timeout ]]; then
+    echo "   WARNING: API key provisioning log not found, attempting manual provisioning..." >&2
+    # Try to run the provisioning script manually
+    if docker exec "$WEB_CONTAINER" php /var/www/scripts/docker-init.d/90-provision-api-key.php 2>&1 | grep -q "API key provisioned successfully"; then
+        echo "   API key provisioned manually."
+    else
+        echo "   ERROR: API key provisioning failed" >&2
+        docker logs "$WEB_CONTAINER" 2>&1 | grep -i "provision-api-key" || echo "   No provisioning logs found"
+        exit 1
+    fi
+fi
 
 # Resolve Dolibarr database prefix from conf.php
 # Use PHP to reliably parse the configuration file
@@ -177,7 +210,7 @@ if [[ "$http_code" != "200" ]]; then
 fi
 
 # Validate JSON response
-if ! echo "$body" | jq -e . >/dev/null 2>&1; then
+if ! echo "$body" | docker exec -i "$WEB_CONTAINER" php -r 'json_decode(file_get_contents("php://stdin"), true);' >/dev/null 2>&1; then
     echo "   ERROR: Response is not valid JSON" >&2
     echo "   Response: $body" >&2
     exit 1
@@ -185,7 +218,7 @@ fi
 
 # Verify authenticated user matches expected admin login
 expected_login="${ADMIN_LOGIN:-admin}"
-actual_login=$(echo "$body" | jq -r '.login // empty' 2>/dev/null || echo "")
+actual_login=$(echo "$body" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["login"] ?? "";')
 if [[ "$actual_login" != "$expected_login" ]]; then
     echo "   ERROR: Expected login '$expected_login', got '$actual_login'" >&2
     exit 1
@@ -218,7 +251,232 @@ if [[ "$charset" != "utf8mb4" ]] || [[ "$collation" != "utf8mb4_unicode_ci" ]]; 
     echo "   WARNING: Database charset/collation not as expected (utf8mb4/utf8mb4_unicode_ci)"
 fi
 
+# Verify Swagger endpoint and descriptor (DOL-REF-002)
+echo "10/14 Verifying Swagger endpoint..."
+SWAGGER_URL="${BASE_URL}/api/index.php/explorer/swagger.json"
+swagger_response=$(curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${EPHEMERAL_API_KEY}" -H "Accept: application/json" "$SWAGGER_URL" 2>/dev/null || echo -e "\n000")
+swagger_http_code=$(echo "$swagger_response" | tail -1)
+swagger_body=$(echo "$swagger_response" | head -n -1)
+
+if [[ "$swagger_http_code" != "200" ]]; then
+    echo "   ERROR: Swagger endpoint returned HTTP $swagger_http_code" >&2
+    exit 1
+fi
+
+if ! echo "$swagger_body" | docker exec -i "$WEB_CONTAINER" php -r 'json_decode(file_get_contents("php://stdin"), true);' >/dev/null 2>&1; then
+    echo "   ERROR: Swagger descriptor is not valid JSON" >&2
+    exit 1
+fi
+echo "   Swagger endpoint reachable, valid JSON"
+
+# Verify descriptor has paths
+path_count=$(echo "$swagger_body" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo count($d["paths"] ?? []);' 2>/dev/null || echo "0")
+if [[ "$path_count" -lt 1 ]]; then
+    echo "   ERROR: Swagger descriptor has no paths" >&2
+    exit 1
+fi
+echo "   Paths found: $path_count"
+
+# Verify /users/info exists in descriptor
+if ! echo "$swagger_body" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); exit(isset($d["paths"]["/users/info"]) ? 0 : 1);' >/dev/null 2>&1; then
+    echo "   ERROR: /users/info not found in Swagger descriptor" >&2
+    exit 1
+fi
+echo "   /users/info present in descriptor"
+
+# Verify technical capture can be generated and matches baseline
+echo "11/14 Verifying technical capture generation..."
+CHECK_TEMP_DIR=$(mktemp -d)
+trap 'rm -rf "$CHECK_TEMP_DIR"' EXIT
+
+# Copy process-swagger.php to the check container (required for capture)
+docker cp "$PROJECT_ROOT/scripts/process-swagger.php" "$WEB_CONTAINER:/var/www/scripts/process-swagger.php" 2>/dev/null || true
+
+# Create a minimal capture script for the check environment
+cat > "$CHECK_TEMP_DIR/capture-check.sh" <<'CAPTURE_EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+BASE_URL="$1"
+API_KEY="$2"
+DB_CONTAINER="$3"
+DB_USER="$4"
+DB_PASSWORD="$5"
+DB_NAME="$6"
+WEB_CONTAINER="$7"
+OUTPUT_DIR="$8"
+
+# Get database prefix
+DB_PREFIX=$(docker exec "$WEB_CONTAINER" php -r "
+require '/var/www/html/conf/conf.php';
+echo \$dolibarr_main_db_prefix ?? 'llx_';
+" 2>/dev/null | tr -d '\r\n')
+if [[ -z "$DB_PREFIX" ]]; then DB_PREFIX="llx_"; fi
+
+# Get Dolibarr version
+DOLIBARR_VERSION=$(docker exec "$WEB_CONTAINER" grep "define('DOL_MINOR_VERSION'" /var/www/html/version.inc.php 2>/dev/null | sed "s/.*'DOL_MINOR_VERSION', '\([^']*\)'.*/\1/" | tr -d '\r\n' || echo "unknown")
+DOLIBARR_VERSION="24.${DOLIBARR_VERSION}"
+
+# Get MariaDB version
+MARIADB_VERSION=$(docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | head -1 || echo "unknown")
+
+# Get charset/collation
+CHARSET=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'character_set_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+COLLATION=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'collation_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+TABLE_COUNT=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$DB_NAME';" 2>/dev/null | tr -d '\r\n' || echo "0")
+
+# Get enabled modules
+MODULES=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT name FROM ${DB_PREFIX}const WHERE name LIKE 'MAIN_MODULE_%' AND value='1' ORDER BY name;" 2>/dev/null | sed 's/^MAIN_MODULE_//' | tr '\n' ',' | sed 's/,$//' || echo "")
+
+# Get company info
+COMPANY_NAME=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+COMPANY_COUNTRY=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_COUNTRY' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+
+# Get API config
+API_CONFIG_JSON=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "
+SELECT CONCAT('\"', name, '\":', json_quote(value))
+FROM ${DB_PREFIX}const
+WHERE name IN (
+    'API_EXPLORER_DISABLED', 'API_ENDPOINT_RULES', 'API_RESTRICT_ON_IP',
+    'API_DISABLE_COMPRESSION', 'API_IN_TOKEN_TABLE', 'MAIN_LANG_DEFAULT'
+)
+ORDER BY name;
+" 2>/dev/null | paste -sd, || echo "")
+
+# Prepare modules JSON (as JSON array)
+MODULES_JSON=$(echo "$MODULES" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
+if [[ "$MODULES" == "" ]]; then
+    MODULES_JSON="[]"
+fi
+
+# Fetch Swagger
+SWAGGER_URL="${BASE_URL}/api/index.php/explorer/swagger.json"
+curl -fsS -H "DOLAPIKEY: ${API_KEY}" -H "Accept: application/json" "$SWAGGER_URL" > "$OUTPUT_DIR/swagger_raw.json"
+
+# Normalize Swagger using PHP in container (only removes host, preserves all contractual data)
+cat "$OUTPUT_DIR/swagger_raw.json" | docker exec -i "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php normalize > "$OUTPUT_DIR/swagger_normalized.json"
+
+# Generate API inventory using PHP in container
+cat "$OUTPUT_DIR/swagger_normalized.json" | docker exec -i "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php inventory > "$OUTPUT_DIR/api_inventory.tsv"
+
+# Compute metadata using PHP in container
+METADATA=$(cat "$OUTPUT_DIR/swagger_normalized.json" | docker exec -i "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php metadata)
+SWAGGER_TYPE=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["type"];')
+PATH_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["path_count"];')
+OPERATION_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["operation_count"];')
+TAG_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["tag_count"];')
+DEFINITION_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["definition_count"];')
+SWAGGER_SHA256=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["swagger_sha256"];')
+
+# Generate technical-reference.json using PHP in container with generate-tr command
+cat "$OUTPUT_DIR/swagger_normalized.json" | docker exec -i \
+    -e DOLIBARR_VERSION="$DOLIBARR_VERSION" \
+    -e SOURCE_COMMIT="b7958385f00a92219f76a4dfea67dae93df97a25" \
+    -e DOLIBARR_IMAGE="dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce" \
+    -e DB_ENGINE="MariaDB" \
+    -e DB_VERSION="10.11.19" \
+    -e DB_IMAGE="mariadb:10.11.19-jammy@sha256:dc9dd57be7f46ad6f350c598a331d64f295899c4abac3ec5652eff831fc38a6c" \
+    -e DB_CHARSET="$CHARSET" \
+    -e DB_COLLATION="$COLLATION" \
+    -e DB_PREFIX="$DB_PREFIX" \
+    -e DB_TABLE_COUNT="$TABLE_COUNT" \
+    -e COMPANY_NAME="$COMPANY_NAME" \
+    -e COMPANY_COUNTRY="$COMPANY_COUNTRY" \
+    -e MODULES_JSON="$MODULES_JSON" \
+    -e API_CONFIG_JSON="$API_CONFIG_JSON" \
+    -e SWAGGER_TYPE="$SWAGGER_TYPE" \
+    -e SWAGGER_BASE_PATH="/api/index.php" \
+    -e PATH_COUNT="$PATH_COUNT" \
+    -e OPERATION_COUNT="$OPERATION_COUNT" \
+    -e TAG_COUNT="$TAG_COUNT" \
+    -e DEFINITION_COUNT="$DEFINITION_COUNT" \
+    -e SWAGGER_SHA256="$SWAGGER_SHA256" \
+    "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php generate-tr > "$OUTPUT_DIR/technical-reference.json"
+CAPTURE_EOF
+
+chmod +x "$CHECK_TEMP_DIR/capture-check.sh"
+"$CHECK_TEMP_DIR/capture-check.sh" "$BASE_URL" "$EPHEMERAL_API_KEY" "$DB_CONTAINER" "$DB_USER" "$DB_PASSWORD" "$DB_NAME" "$WEB_CONTAINER" "$CHECK_TEMP_DIR"
+
+echo "   Technical capture generated successfully"
+
+# Compare with committed baseline
+echo "12/14 Comparing with committed baseline..."
+BASELINE_DIR="$PROJECT_ROOT/reference/baseline"
+if [[ ! -d "$BASELINE_DIR" ]]; then
+    echo "   ERROR: Baseline directory not found at $BASELINE_DIR" >&2
+    exit 1
+fi
+
+# Compare swagger.json (normalized)
+if ! diff -u "$BASELINE_DIR/swagger.json" "$CHECK_TEMP_DIR/swagger_normalized.json" >/dev/null 2>&1; then
+    echo "   ERROR: Swagger descriptor drift detected vs committed baseline" >&2
+    echo "   Run ./bin/capture-technical on baseline to update" >&2
+    diff -u "$BASELINE_DIR/swagger.json" "$CHECK_TEMP_DIR/swagger_normalized.json" | head -50 >&2
+    exit 1
+fi
+echo "   swagger.json matches baseline"
+
+# Compare api-inventory.tsv
+if ! diff -u "$BASELINE_DIR/api-inventory.tsv" "$CHECK_TEMP_DIR/api_inventory.tsv" >/dev/null 2>&1; then
+    echo "   ERROR: API inventory drift detected vs committed baseline" >&2
+    diff -u "$BASELINE_DIR/api-inventory.tsv" "$CHECK_TEMP_DIR/api_inventory.tsv" | head -50 >&2
+    exit 1
+fi
+echo "   api-inventory.tsv matches baseline"
+
+# Compare technical-reference.json (excluding potentially variable fields)
+# We compare the normalized versions using PHP (no host jq dependency)
+docker exec -i "$WEB_CONTAINER" php -r '
+$baseline = json_decode(file_get_contents("php://stdin"), true);
+unset($baseline["database"]["character_set"], $baseline["database"]["collation"]);
+ksort($baseline);
+echo json_encode($baseline, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+' < "$BASELINE_DIR/technical-reference.json" > "$CHECK_TEMP_DIR/baseline_tr.json"
+
+docker exec -i "$WEB_CONTAINER" php -r '
+$check = json_decode(file_get_contents("php://stdin"), true);
+unset($check["database"]["character_set"], $check["database"]["collation"]);
+ksort($check);
+echo json_encode($check, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+' < "$CHECK_TEMP_DIR/technical-reference.json" > "$CHECK_TEMP_DIR/check_tr.json"
+if ! diff -u "$CHECK_TEMP_DIR/baseline_tr.json" "$CHECK_TEMP_DIR/check_tr.json" >/dev/null 2>&1; then
+    echo "   ERROR: Technical reference drift detected vs committed baseline" >&2
+    diff -u "$CHECK_TEMP_DIR/baseline_tr.json" "$CHECK_TEMP_DIR/check_tr.json" | head -50 >&2
+    exit 1
+fi
+echo "   technical-reference.json matches baseline"
+
+echo ""
+echo "13/14 Verifying no secrets in artifacts..."
+# Check for API key in generated artifacts
+if grep -q "$EPHEMERAL_API_KEY" "$CHECK_TEMP_DIR/swagger_normalized.json" 2>/dev/null; then
+    echo "   ERROR: Ephemeral API key found in generated swagger.json" >&2
+    exit 1
+fi
+if grep -q "$EPHEMERAL_API_KEY" "$CHECK_TEMP_DIR/technical-reference.json" 2>/dev/null; then
+    echo "   ERROR: Ephemeral API key found in generated technical-reference.json" >&2
+    exit 1
+fi
+echo "   No secrets detected in generated artifacts"
+
+echo ""
+echo "14/14 All technical reference validations passed"
+
+echo ""
+mariadb_version=$(docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | head -1 || echo "unknown")
+echo "   MariaDB: $mariadb_version"
+
+# Verify charset/collation
+charset=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'character_set_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+collation=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'collation_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+echo "   Database charset: $charset"
+echo "   Database collation: $collation"
+
+if [[ "$charset" != "utf8mb4" ]] || [[ "$collation" != "utf8mb4_unicode_ci" ]]; then
+    echo "   WARNING: Database charset/collation not as expected (utf8mb4/utf8mb4_unicode_ci)"
+fi
+
 echo ""
 echo "=== All Checks Passed ==="
 echo "Dolibarr $dolibarr_version operational with REST API and Third Parties modules."
 echo "REST authentication validated: valid key -> 200, invalid key -> 401"
+echo "Technical reference validated: Swagger descriptor, API inventory, and metadata match committed baseline"

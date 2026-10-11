@@ -1,0 +1,40 @@
+{
+    "profile": "baseline",
+    "dolibarr": {
+        "version": "24.0.1",
+        "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25",
+        "image": "dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce"
+    },
+    "database": {
+        "engine": "MariaDB",
+        "version": "10.11.19",
+        "image": "mariadb:10.11.19-jammy@sha256:dc9dd57be7f46ad6f350c598a331d64f295899c4abac3ec5652eff831fc38a6c",
+        "character_set": "utf8mb4",
+        "collation": "utf8mb4_general_ci",
+        "configured_prefix": "llx_",
+        "table_count": 410
+    },
+    "entity": {
+        "company_name": "Alxarafe Reference",
+        "country_code": "4:ES:Spain"
+    },
+    "modules": {
+        "enabled": [
+            "API",
+            "SOCIETE",
+            "USER"
+        ]
+    },
+    "api_configuration": {
+        "MAIN_LANG_DEFAULT": "auto"
+    },
+    "descriptor": {
+        "type": "2.0",
+        "base_path": "/api/index.php",
+        "path_count": 106,
+        "operation_count": 146,
+        "tag_count": 9,
+        "definition_count": 31,
+        "swagger_sha256": "f2bd9961a45f07f12c430997946c2c6f2a18ac8bd6c53c069c2baee5a8d9db8a"
+    }
+}

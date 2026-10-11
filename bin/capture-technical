@@ -1,0 +1,284 @@
+#!/usr/bin/env bash
+# bin/capture-technical - Capture Dolibarr technical reference from running baseline
+# Strict shell policy
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+# Load environment (prefer .env, fall back to .env.example)
+ENV_FILE="$PROJECT_ROOT/.env"
+if [[ ! -f "$ENV_FILE" ]]; then
+    ENV_FILE="$PROJECT_ROOT/.env.example"
+fi
+set -a
+# shellcheck source=/dev/null
+source "$ENV_FILE"
+set +a
+
+# Configuration
+BASE_URL="http://127.0.0.1:${DOLIBARR_REFERENCE_PORT:-48240}"
+API_KEY="${DOLIBARR_REFERENCE_API_KEY:-}"
+REFERENCE_DIR="$PROJECT_ROOT/reference/baseline"
+TEMP_DIR=$(mktemp -d)
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+log_info() { echo -e "${GREEN}[INFO]${NC} $*"; }
+log_warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
+
+cleanup() {
+    rm -rf "$TEMP_DIR"
+}
+trap cleanup EXIT
+
+# Validate prerequisites
+if [[ -z "$API_KEY" ]]; then
+    log_error "DOLIBARR_REFERENCE_API_KEY not set in environment"
+    exit 1
+fi
+
+# Check containers are running
+WEB_CONTAINER=$(docker compose -f "$PROJECT_ROOT/compose.yaml" ps -q dolibarr 2>/dev/null || echo "")
+DB_CONTAINER=$(docker compose -f "$PROJECT_ROOT/compose.yaml" ps -q database 2>/dev/null || echo "")
+
+if [[ -z "$WEB_CONTAINER" ]] || [[ -z "$DB_CONTAINER" ]]; then
+    log_error "Dolibarr containers not running. Run ./bin/up first."
+    exit 1
+fi
+
+log_info "Starting technical reference capture..."
+
+# 1. Get database prefix from Dolibarr configuration
+DB_PREFIX=$(docker exec "$WEB_CONTAINER" php -r "
+require '/var/www/html/conf/conf.php';
+echo \$dolibarr_main_db_prefix ?? 'llx_';
+" 2>/dev/null | tr -d '\r\n')
+if [[ -z "$DB_PREFIX" ]]; then
+    DB_PREFIX="llx_"
+fi
+log_info "Database prefix: $DB_PREFIX"
+
+# 2. Get Dolibarr version
+DOLIBARR_VERSION=$(docker exec "$WEB_CONTAINER" grep "define('DOL_MINOR_VERSION'" /var/www/html/version.inc.php 2>/dev/null | sed "s/.*'DOL_MINOR_VERSION', '\([^']*\)'.*/\1/" | tr -d '\r\n' || echo "unknown")
+DOLIBARR_VERSION="24.${DOLIBARR_VERSION}"
+log_info "Dolibarr version: $DOLIBARR_VERSION"
+
+# 3. Get MariaDB version and charset/collation
+MARIADB_VERSION=$(docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | head -1 || echo "unknown")
+CHARSET=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'character_set_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+COLLATION=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'collation_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+TABLE_COUNT=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$DB_NAME';" 2>/dev/null | tr -d '\r\n' || echo "0")
+log_info "MariaDB: $MARIADB_VERSION"
+log_info "Database charset: $CHARSET, collation: $COLLATION, tables: $TABLE_COUNT"
+
+# 4. Get enabled modules
+MODULES=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT name FROM ${DB_PREFIX}const WHERE name LIKE 'MAIN_MODULE_%' AND value='1' ORDER BY name;" 2>/dev/null | sed 's/^MAIN_MODULE_//' | tr '\n' ',' | sed 's/,$//' || echo "")
+log_info "Enabled modules: $MODULES"
+
+# 5. Get company info
+COMPANY_NAME=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+COMPANY_COUNTRY=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_COUNTRY' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+log_info "Company: $COMPANY_NAME ($COMPANY_COUNTRY)"
+
+# 6. Get relevant API configuration (whitelist only)
+API_CONFIG_JSON=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "
+SELECT CONCAT('\"', name, '\":', json_quote(value))
+FROM ${DB_PREFIX}const
+WHERE name IN (
+    'API_EXPLORER_DISABLED', 'API_ENDPOINT_RULES', 'API_RESTRICT_ON_IP',
+    'API_DISABLE_COMPRESSION', 'API_IN_TOKEN_TABLE', 'MAIN_LANG_DEFAULT'
+)
+ORDER BY name;
+" 2>/dev/null | paste -sd, || echo "")
+
+# 7. Fetch Swagger descriptor
+log_info "Fetching Swagger descriptor..."
+SWAGGER_URL="${BASE_URL}/api/index.php/explorer/swagger.json"
+curl -fsS -H "DOLAPIKEY: ${API_KEY}" -H "Accept: application/json" "$SWAGGER_URL" > "$TEMP_DIR/swagger_raw.json"
+
+if [[ ! -s "$TEMP_DIR/swagger_raw.json" ]]; then
+    log_error "Failed to fetch Swagger descriptor"
+    exit 1
+fi
+
+# 8. Normalize Swagger descriptor using PHP in container (no host jq dependency)
+# Only removes host (environment-dependent), sorts keys deterministically
+# Preserves all contractual data: info.*, schemes, paths, definitions, securityDefinitions
+log_info "Normalizing Swagger descriptor..."
+cat "$TEMP_DIR/swagger_raw.json" | docker exec -i "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php normalize > "$TEMP_DIR/swagger_normalized.json"
+
+# Validate JSON
+if ! docker exec -i "$WEB_CONTAINER" php -r 'json_decode(file_get_contents("php://stdin"), true);' < "$TEMP_DIR/swagger_normalized.json" 2>/dev/null; then
+    log_error "Normalized Swagger descriptor is not valid JSON"
+    exit 1
+fi
+
+# 9. Verify no secrets in normalized swagger
+if grep -q "$API_KEY" "$TEMP_DIR/swagger_normalized.json" 2>/dev/null; then
+    log_error "API key found in normalized Swagger - ABORTING"
+    exit 1
+fi
+
+# Check for actual secret values (not parameter names, descriptions, or schema definitions)
+# Parameter names like "password" in descriptions/schemas are expected in API docs
+# Security scheme references like "api_key": [] are also expected
+if grep -E '"(api[_-]?key|secret|token|password)"\s*:\s*"[^"]{20,}"' "$TEMP_DIR/swagger_normalized.json" 2>/dev/null | head -1; then
+    log_warn "Potential secret value (long string in field value) found in Swagger - review required"
+fi
+
+# 10. Generate API inventory using PHP in container
+log_info "Generating API inventory..."
+cat "$TEMP_DIR/swagger_normalized.json" | docker exec -i "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php inventory > "$TEMP_DIR/api_inventory.tsv"
+
+# 11. Compute metadata using PHP in container
+log_info "Computing metadata..."
+METADATA=$(cat "$TEMP_DIR/swagger_normalized.json" | docker exec -i "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php metadata)
+SWAGGER_TYPE=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["type"];')
+PATH_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["path_count"];')
+OPERATION_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["operation_count"];')
+TAG_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["tag_count"];')
+DEFINITION_COUNT=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["definition_count"];')
+SWAGGER_SHA256=$(echo "$METADATA" | docker exec -i "$WEB_CONTAINER" php -r '$d=json_decode(file_get_contents("php://stdin"),true); echo $d["swagger_sha256"];')
+
+log_info "Descriptor type: $SWAGGER_TYPE"
+log_info "Paths: $PATH_COUNT, Operations: $OPERATION_COUNT, Tags: $TAG_COUNT, Definitions: $DEFINITION_COUNT"
+log_info "Swagger SHA-256: $SWAGGER_SHA256"
+
+# 12. Generate technical-reference.json using PHP for robust JSON serialization
+log_info "Generating technical-reference.json..."
+cat > "$TEMP_DIR/generate_tr.php" <<'PHP_EOF'
+<?php
+// Read all inputs from environment
+$dolibarr_version = getenv('DOLIBARR_VERSION');
+$source_commit = getenv('SOURCE_COMMIT');
+$image = getenv('DOLIBARR_IMAGE');
+$db_engine = getenv('DB_ENGINE');
+$db_version = getenv('DB_VERSION');
+$db_image = getenv('DB_IMAGE');
+$charset = getenv('DB_CHARSET');
+$collation = getenv('DB_COLLATION');
+$db_prefix = getenv('DB_PREFIX');
+$table_count = (int)getenv('DB_TABLE_COUNT');
+$company_name = getenv('COMPANY_NAME');
+$company_country = getenv('COMPANY_COUNTRY');
+$modules_json = getenv('MODULES_JSON');
+$api_config_json = getenv('API_CONFIG_JSON');
+$swagger_type = getenv('SWAGGER_TYPE');
+$base_path = getenv('SWAGGER_BASE_PATH');
+$path_count = (int)getenv('PATH_COUNT');
+$operation_count = (int)getenv('OPERATION_COUNT');
+$tag_count = (int)getenv('TAG_COUNT');
+$definition_count = (int)getenv('DEFINITION_COUNT');
+$swagger_sha256 = getenv('SWAGGER_SHA256');
+
+// Build modules array
+$modules = [];
+if ($modules_json !== '') {
+    $modules = array_map('trim', explode(',', $modules_json));
+}
+
+// Build API config object
+$api_config = [];
+if ($api_config_json !== '') {
+    // Parse the key:value pairs
+    $pairs = explode(',', $api_config_json);
+    foreach ($pairs as $pair) {
+        if (strpos($pair, ':') !== false) {
+            list($k, $v) = explode(':', $pair, 2);
+            $k = trim($k, '"');
+            $v = trim($v, '"');
+            $api_config[$k] = $v;
+        }
+    }
+}
+
+$result = [
+    "profile" => "baseline",
+    "dolibarr" => [
+        "version" => $dolibarr_version,
+        "source_commit" => $source_commit,
+        "image" => $image
+    ],
+    "database" => [
+        "engine" => $db_engine,
+        "version" => $db_version,
+        "image" => $db_image,
+        "character_set" => $charset,
+        "collation" => $collation,
+        "configured_prefix" => $db_prefix,
+        "table_count" => $table_count
+    ],
+    "entity" => [
+        "company_name" => $company_name,
+        "country_code" => $company_country
+    ],
+    "modules" => [
+        "enabled" => $modules
+    ],
+    "api_configuration" => $api_config,
+    "descriptor" => [
+        "type" => $swagger_type,
+        "base_path" => $base_path,
+        "path_count" => $path_count,
+        "operation_count" => $operation_count,
+        "tag_count" => $tag_count,
+        "definition_count" => $definition_count,
+        "swagger_sha256" => $swagger_sha256
+    ]
+];
+
+// Deterministic JSON output with sorted keys
+echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+PHP_EOF
+
+# Prepare modules JSON (as JSON array for proper parsing)
+MODULES_JSON=$(echo "$MODULES" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
+if [[ "$MODULES" == "" ]]; then
+    MODULES_JSON="[]"
+fi
+
+# Generate technical-reference.json using the new "generate-tr" command
+# Pass all variables as environment variables to the container
+cat "$TEMP_DIR/swagger_normalized.json" | docker exec -i \
+    -e DOLIBARR_VERSION="$DOLIBARR_VERSION" \
+    -e SOURCE_COMMIT="b7958385f00a92219f76a4dfea67dae93df97a25" \
+    -e DOLIBARR_IMAGE="dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce" \
+    -e DB_ENGINE="MariaDB" \
+    -e DB_VERSION="10.11.19" \
+    -e DB_IMAGE="mariadb:10.11.19-jammy@sha256:dc9dd57be7f46ad6f350c598a331d64f295899c4abac3ec5652eff831fc38a6c" \
+    -e DB_CHARSET="$CHARSET" \
+    -e DB_COLLATION="$COLLATION" \
+    -e DB_PREFIX="$DB_PREFIX" \
+    -e DB_TABLE_COUNT="$TABLE_COUNT" \
+    -e COMPANY_NAME="$COMPANY_NAME" \
+    -e COMPANY_COUNTRY="$COMPANY_COUNTRY" \
+    -e MODULES_JSON="$MODULES_JSON" \
+    -e API_CONFIG_JSON="$API_CONFIG_JSON" \
+    -e SWAGGER_TYPE="$SWAGGER_TYPE" \
+    -e SWAGGER_BASE_PATH="/api/index.php" \
+    -e PATH_COUNT="$PATH_COUNT" \
+    -e OPERATION_COUNT="$OPERATION_COUNT" \
+    -e TAG_COUNT="$TAG_COUNT" \
+    -e DEFINITION_COUNT="$DEFINITION_COUNT" \
+    -e SWAGGER_SHA256="$SWAGGER_SHA256" \
+    "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php generate-tr > "$TEMP_DIR/technical-reference.json"
+
+# 13. Write artifacts to reference directory
+mkdir -p "$REFERENCE_DIR"
+
+log_info "Writing artifacts to $REFERENCE_DIR..."
+cp "$TEMP_DIR/swagger_normalized.json" "$REFERENCE_DIR/swagger.json"
+cp "$TEMP_DIR/api_inventory.tsv" "$REFERENCE_DIR/api-inventory.tsv"
+cp "$TEMP_DIR/technical-reference.json" "$REFERENCE_DIR/technical-reference.json"
+
+log_info "Capture complete."
+log_info "  swagger.json: $(wc -l < "$REFERENCE_DIR/swagger.json") lines"
+log_info "  api-inventory.tsv: $(wc -l < "$REFERENCE_DIR/api-inventory.tsv") operations"
+log_info "  technical-reference.json: $(wc -c < "$REFERENCE_DIR/technical-reference.json") bytes"
+log_info "  Swagger SHA-256: $SWAGGER_SHA256"
