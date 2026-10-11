@@ -1,0 +1,64 @@
+services:
+  database:
+    image: mariadb:10.11.19-jammy@sha256:dc9dd57be7f46ad6f350c598a331d64f295899c4abac3ec5652eff831fc38a6c
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-dolidb}
+      MARIADB_USER: ${DB_USER:-dolidbuser}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-dolidbpass}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
+      MARIADB_CHARACTER_SET: utf8mb4
+      MARIADB_COLLATE: utf8mb4_unicode_ci
+    volumes:
+      - dolibarr_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - dolibarr_net
+
+  dolibarr:
+    image: dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce
+    environment:
+      DOLI_DB_HOST: database
+      DOLI_DB_HOST_PORT: 3306
+      DOLI_DB_NAME: ${DB_NAME:-dolidb}
+      DOLI_DB_USER: ${DB_USER:-dolidbuser}
+      DOLI_DB_PASSWORD: ${DB_PASSWORD:-dolidbpass}
+      DOLI_DB_TYPE: mysqli
+      DOLI_INSTALL_AUTO: 1
+      DOLI_INIT_DEMO: 0
+      DOLI_COMPANY_NAME: ${COMPANY_NAME:-Alxarafe Reference}
+      DOLI_COMPANY_COUNTRYCODE: ${COMPANY_COUNTRYCODE:-ES}
+      DOLI_ADMIN_LOGIN: ${ADMIN_LOGIN:-admin}
+      DOLI_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      DOLI_ENABLE_MODULES: ${ENABLE_MODULES:-Api,Societe}
+      DOLI_URL_ROOT: http://127.0.0.1:${DOLIBARR_REFERENCE_PORT:-48240}
+      DOLI_PROD: 1
+      DOLI_AUTH: dolibarr
+      DOLI_CRON_KEY: ${CRON_KEY:-}
+    volumes:
+      - dolibarr_documents:/var/www/documents
+    ports:
+      - "127.0.0.1:${DOLIBARR_REFERENCE_PORT:-48240}:80"
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/ >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks:
+      - dolibarr_net
+
+volumes:
+  dolibarr_db_data:
+  dolibarr_documents:
+
+networks:
+  dolibarr_net:
+    driver: bridge

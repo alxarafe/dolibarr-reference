@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# bin/status - Show Dolibarr reference environment status
+# Strict shell policy
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+COMPOSE_FILE="$PROJECT_ROOT/compose.yaml"
+
+# Load .env if present
+if [[ -f "$PROJECT_ROOT/.env" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "$PROJECT_ROOT/.env"
+    set +a
+fi
+
+export DOLIBARR_REFERENCE_PORT="${DOLIBARR_REFERENCE_PORT:-48240}"
+
+echo "=== Dolibarr Reference Environment Status ==="
+echo ""
+
+# Container status
+echo "--- Containers ---"
+docker compose -f "$COMPOSE_FILE" ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+
+echo ""
+echo "--- Configuration ---"
+echo "Project: $(basename "$PROJECT_ROOT")"
+echo "Port: ${DOLIBARR_REFERENCE_PORT}"
+echo "URL: http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}"
+echo "API Explorer: http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/api/index.php"
+echo "Company: ${COMPANY_NAME:-Alxarafe Reference}"
+echo "Country: ${COMPANY_COUNTRYCODE:-ES}"
+echo "Modules: ${ENABLE_MODULES:-Api,Societe}"
+
+# Get container IDs
+DB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" ps -q database 2>/dev/null || true)
+WEB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" ps -q dolibarr 2>/dev/null || true)
+
+echo ""
+echo "--- Database ---"
+if [[ -n "$DB_CONTAINER" ]]; then
+    docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | sed 's/^/  /'
+    db_health=$(docker inspect --format '{{.State.Health.Status}}' "$DB_CONTAINER" 2>/dev/null || echo "unknown")
+    echo "  Health: $db_health"
+else
+    echo "  Not running"
+fi
+
+echo ""
+echo "--- Dolibarr ---"
+if [[ -n "$WEB_CONTAINER" ]]; then
+    docker exec "$WEB_CONTAINER" cat /var/www/html/htdocs/install/version.txt 2>/dev/null | sed 's/^/  Version: /'
+    web_health=$(docker inspect --format '{{.State.Health.Status}}' "$WEB_CONTAINER" 2>/dev/null || echo "unknown")
+    echo "  Health: $web_health"
+else
+    echo "  Not running"
+fi
+
+echo ""
+echo "--- Volumes ---"
+docker volume ls --filter "name=dolibarr-reference_" --format "table {{.Name}}\t{{.Driver}}"

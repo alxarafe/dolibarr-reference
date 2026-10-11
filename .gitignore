@@ -1,0 +1,15 @@
+# Environment file with real credentials
+.env
+
+# Docker volumes (not committed)
+# Named volumes are managed by Docker, not stored in repo
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

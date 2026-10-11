@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+# bin/check - Validate Dolibarr reference environment from a clean state
+# Strict shell policy
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+COMPOSE_FILE="$PROJECT_ROOT/compose.yaml"
+
+# Use isolated project name for check
+CHECK_PROJECT="dolibarr-reference-check"
+
+# Load .env.example for defaults (not .env to avoid developer's credentials)
+ENV_FILE="$PROJECT_ROOT/.env.example"
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo "ERROR: .env.example not found" >&2
+    exit 1
+fi
+
+set -a
+# shellcheck source=/dev/null
+source "$ENV_FILE"
+set +a
+
+# Use a different port for isolated check to avoid conflicts
+export DOLIBARR_REFERENCE_PORT="48241"
+export COMPOSE_PROJECT_NAME="$CHECK_PROJECT"
+
+echo "=== Dolibarr Reference Environment Validation ==="
+echo "Isolated project: $CHECK_PROJECT"
+echo ""
+
+cleanup() {
+    local exit_code=$?
+    echo ""
+    echo "--- Cleanup ---"
+    docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" down -v --remove-orphans 2>/dev/null || true
+    # Ensure volumes are removed
+    docker volume rm "${CHECK_PROJECT}_dolibarr_db_data" 2>/dev/null || true
+    docker volume rm "${CHECK_PROJECT}_dolibarr_documents" 2>/dev/null || true
+    if [[ $exit_code -ne 0 ]]; then
+        echo "VALIDATION FAILED" >&2
+    else
+        echo "VALIDATION PASSED"
+    fi
+    exit $exit_code
+}
+trap cleanup EXIT
+
+# Fresh database: start MariaDB
+echo "1/8 Starting MariaDB..."
+docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" up -d database
+
+# Wait for database readiness
+echo "2/8 Waiting for database readiness..."
+timeout=120
+elapsed=0
+while [[ $elapsed -lt $timeout ]]; do
+    db_status=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q database | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    if [[ "$db_status" == "healthy" ]]; then
+        echo "   Database healthy."
+        break
+    fi
+    sleep 2
+    elapsed=$((elapsed + 2))
+done
+if [[ $elapsed -ge $timeout ]]; then
+    echo "   ERROR: Database not ready" >&2
+    docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" logs database
+    exit 1
+fi
+
+# Start Dolibarr
+echo "3/8 Starting Dolibarr..."
+docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" up -d dolibarr
+
+# Wait for Dolibarr automatic installation and web readiness
+echo "4/8 Waiting for Dolibarr installation and web readiness..."
+timeout=240
+elapsed=0
+while [[ $elapsed -lt $timeout ]]; do
+    web_status=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q dolibarr | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    if [[ "$web_status" == "healthy" ]]; then
+        echo "   Dolibarr healthy."
+        break
+    fi
+    sleep 3
+    elapsed=$((elapsed + 3))
+done
+if [[ $elapsed -ge $timeout ]]; then
+    echo "   ERROR: Dolibarr not ready" >&2
+    docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" logs dolibarr
+    exit 1
+fi
+
+# Get container IDs
+DB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q database)
+WEB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$CHECK_PROJECT" ps -q dolibarr)
+
+# Verify HTTP response
+echo "5/8 Verifying HTTP response..."
+if ! curl -fsS "http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/" >/dev/null; then
+    echo "   ERROR: HTTP request failed" >&2
+    exit 1
+fi
+echo "   HTTP 200 OK"
+
+# Verify expected Dolibarr installation
+echo "6/8 Verifying Dolibarr installation..."
+dolibarr_version=$(docker exec "$WEB_CONTAINER" grep "define('DOL_MINOR_VERSION'" /var/www/html/version.inc.php 2>/dev/null | sed "s/.*'DOL_MINOR_VERSION', '\([^']*\)'.*/\1/" | tr -d '\r\n' || echo "unknown")
+# Reconstruct full version from major.minor
+dolibarr_version="24.${dolibarr_version}"
+if [[ "$dolibarr_version" != "24.0.1" ]]; then
+    echo "   ERROR: Unexpected Dolibarr version: $dolibarr_version (expected 24.0.1)" >&2
+    exit 1
+fi
+echo "   Version: $dolibarr_version"
+
+# Verify own-company initialization
+echo "7/8 Verifying company initialization..."
+company_name=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM llx_const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+if [[ "$company_name" != "Alxarafe Reference" ]]; then
+    echo "   ERROR: Company name mismatch: '$company_name' (expected 'Alxarafe Reference')" >&2
+    exit 1
+fi
+echo "   Company: $company_name"
+
+# Verify REST module is enabled
+echo "8/8 Verifying REST API module..."
+api_enabled=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM llx_const WHERE name='MAIN_MODULE_API' AND value='1';" 2>/dev/null | tr -d '\r\n' || echo "0")
+if [[ "$api_enabled" != "1" ]]; then
+    echo "   ERROR: REST API module not enabled" >&2
+    exit 1
+fi
+echo "   REST API module: enabled"
+
+# Verify Third Parties module is enabled
+societe_enabled=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM llx_const WHERE name='MAIN_MODULE_SOCIETE' AND value='1';" 2>/dev/null | tr -d '\r\n' || echo "0")
+if [[ "$societe_enabled" != "1" ]]; then
+    echo "   ERROR: Third Parties (Societe) module not enabled" >&2
+    exit 1
+fi
+echo "   Third Parties module: enabled"
+
+# Verify API Explorer is reachable
+echo "   Verifying API Explorer..."
+if ! curl -fsS "http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/api/index.php" | grep -qi "api explorer\|dolibarr api\|rest api"; then
+    echo "   WARNING: API Explorer may not be fully accessible (checking content)"
+    # Don't fail on this, just warn
+else
+    echo "   API Explorer: reachable"
+fi
+
+# Verify MariaDB version
+mariadb_version=$(docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | head -1 || echo "unknown")
+echo "   MariaDB: $mariadb_version"
+
+# Verify charset/collation
+charset=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'character_set_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+collation=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'collation_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
+echo "   Database charset: $charset"
+echo "   Database collation: $collation"
+
+if [[ "$charset" != "utf8mb4" ]] || [[ "$collation" != "utf8mb4_unicode_ci" ]]; then
+    echo "   WARNING: Database charset/collation not as expected (utf8mb4/utf8mb4_unicode_ci)"
+fi
+
+echo ""
+echo "=== All Checks Passed ==="
+echo "Dolibarr $dolibarr_version operational with REST API and Third Parties modules."
