@@ -66,7 +66,7 @@ fi
 echo ""
 echo "--- Dolibarr ---"
 if [[ -n "$WEB_CONTAINER" ]]; then
-    docker exec "$WEB_CONTAINER" cat /var/www/html/htdocs/install/version.txt 2>/dev/null | sed 's/^/  Version: /'
+    docker exec "$WEB_CONTAINER" grep "define('DOL_MINOR_VERSION'" /var/www/html/version.inc.php 2>/dev/null | sed "s/.*'DOL_MINOR_VERSION', '\([^']*\)'.*/\1/" | sed 's/^/  24./' || echo "  Version: unknown"
     web_health=$(docker inspect --format '{{.State.Health.Status}}' "$WEB_CONTAINER" 2>/dev/null || echo "unknown")
     echo "  Health: $web_health"
 else
@@ -75,6 +75,10 @@ fi
 
 echo ""
 echo "--- Volumes ---"
-# Use compose project name for volume filtering
-COMPOSE_PROJECT_NAME=$(docker compose -f "$COMPOSE_FILE" ls --format json 2>/dev/null | jq -r '.[0].Name // "dolibarr-reference"' 2>/dev/null || echo "dolibarr-reference")
-docker volume ls --filter "name=${COMPOSE_PROJECT_NAME}_" --format "table {{.Name}}\t{{.Driver}}"
+# Get effective Compose project name from config (no jq dependency)
+COMPOSE_PROJECT_NAME=$(docker compose -f "$COMPOSE_FILE" config --format json 2>/dev/null | grep -o '"name": *"[^"]*"' | head -1 | sed 's/"name": *"\([^"]*\)"/\1/')
+if [[ -z "$COMPOSE_PROJECT_NAME" ]]; then
+    echo "  Compose project: unknown (could not determine project name)"
+else
+    docker volume ls --filter "name=${COMPOSE_PROJECT_NAME}_" --format "table {{.Name}}\t{{.Driver}}"
+fi

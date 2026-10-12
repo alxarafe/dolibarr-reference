@@ -28,10 +28,12 @@ echo "Stopping services..."
 docker compose -f "$COMPOSE_FILE" down -v
 
 echo "Removing project volumes..."
-# Use Compose to get the actual project name and volume names
-COMPOSE_PROJECT_NAME=$(docker compose -f "$COMPOSE_FILE" config --services 2>/dev/null | head -1 | sed 's/.*_//' || echo "dolibarr-reference")
-# More reliable: get project name from docker compose
-PROJECT_NAME=$(docker compose -f "$COMPOSE_FILE" ls --format json 2>/dev/null | jq -r '.[0].Name // "dolibarr-reference"' 2>/dev/null || echo "dolibarr-reference")
+# Get effective Compose project name from config (no jq dependency)
+PROJECT_NAME=$(docker compose -f "$COMPOSE_FILE" config --format json 2>/dev/null | grep -o '"name": *"[^"]*"' | head -1 | sed 's/"name": *"\([^"]*\)"/\1/')
+if [[ -z "$PROJECT_NAME" ]]; then
+    echo "ERROR: Could not determine Compose project name from config" >&2
+    exit 1
+fi
 
 # Remove volumes using docker compose down -v already does this, but be explicit
 docker volume rm "${PROJECT_NAME}_dolibarr_db_data" 2>/dev/null || true
