@@ -257,8 +257,9 @@ collation=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$
 echo "   Database charset: $charset"
 echo "   Database collation: $collation"
 
-if [[ "$charset" != "utf8mb4" ]] || [[ "$collation" != "utf8mb4_unicode_ci" ]]; then
-    echo "   WARNING: Database charset/collation not as expected (utf8mb4/utf8mb4_unicode_ci)"
+if [[ "$charset" != "utf8mb4" ]] || [[ "$collation" != "utf8mb4_general_ci" ]]; then
+    echo "   ERROR: Database charset/collation mismatch (expected utf8mb4/utf8mb4_general_ci)" >&2
+    exit 1
 fi
 
 # Verify Swagger endpoint and descriptor (DOL-REF-002)
@@ -432,18 +433,16 @@ if ! diff -u "$BASELINE_DIR/api-inventory.tsv" "$CHECK_TEMP_DIR/api_inventory.ts
 fi
 echo "   api-inventory.tsv matches baseline"
 
-# Compare technical-reference.json (excluding potentially variable fields)
+# Compare technical-reference.json (including charset/collation as strict evidence)
 # We compare the normalized versions using PHP (no host jq dependency)
 docker exec -i "$WEB_CONTAINER" php -r '
 $baseline = json_decode(file_get_contents("php://stdin"), true);
-unset($baseline["database"]["character_set"], $baseline["database"]["collation"]);
 ksort($baseline);
 echo json_encode($baseline, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 ' < "$BASELINE_DIR/technical-reference.json" > "$CHECK_TEMP_DIR/baseline_tr.json"
 
 docker exec -i "$WEB_CONTAINER" php -r '
 $check = json_decode(file_get_contents("php://stdin"), true);
-unset($check["database"]["character_set"], $check["database"]["collation"]);
 ksort($check);
 echo json_encode($check, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 ' < "$CHECK_TEMP_DIR/technical-reference.json" > "$CHECK_TEMP_DIR/check_tr.json"
@@ -469,20 +468,6 @@ echo "   No secrets detected in generated artifacts"
 
 echo ""
 echo "14/14 All technical reference validations passed"
-
-echo ""
-mariadb_version=$(docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | head -1 || echo "unknown")
-echo "   MariaDB: $mariadb_version"
-
-# Verify charset/collation
-charset=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'character_set_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
-collation=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SHOW VARIABLES LIKE 'collation_database';" 2>/dev/null | awk '{print $2}' || echo "unknown")
-echo "   Database charset: $charset"
-echo "   Database collation: $collation"
-
-if [[ "$charset" != "utf8mb4" ]] || [[ "$collation" != "utf8mb4_unicode_ci" ]]; then
-    echo "   WARNING: Database charset/collation not as expected (utf8mb4/utf8mb4_unicode_ci)"
-fi
 
 echo ""
 echo "=== All Checks Passed ==="

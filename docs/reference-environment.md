@@ -158,3 +158,24 @@ This task does **not** design the Alixar API. It captures the Dolibarr contract 
 - **Isolated validation** — `bin/check` uses unique `COMPOSE_PROJECT_NAME`
 - **Declarative configuration** — all via `.env` / `.env.example`
 - **Single validation authority** — `bin/check` (CI runs only this)
+
+## Database Charset/Collation Baseline (AUDIT-002)
+
+The current pinned baseline reproducibly observes the following charset/collation configuration:
+
+| Layer | Character Set | Collation |
+|-------|---------------|-----------|
+| MariaDB server (`character_set_server`, `collation_server`) | `utf8mb4` | `utf8mb4_general_ci` |
+| Effective database (`character_set_database`, `collation_database`) | `utf8mb4` | `utf8mb4_general_ci` |
+| All 410 base tables (`TABLE_COLLATION`) | — | `utf8mb4_general_ci` |
+| Dolibarr `conf.php` (`$dolibarr_main_db_character_set`, `$dolibarr_main_db_collation`) | `utf8mb4` | `utf8mb4_unicode_ci` |
+
+**Key observations:**
+
+- The MariaDB 10.11 Docker image uses server defaults `character-set-server=utf8mb4` and `collation-server=utf8mb4_general_ci`.
+- The database `dolidb` is created without an explicit `CHARACTER SET`/`COLLATE` clause, so it inherits the server defaults.
+- The Dolibarr Docker image writes `utf8mb4_unicode_ci` into `conf.php` as its configured collation, but this is **not** applied to the database at creation time.
+- The previous `compose.yaml` entries `MARIADB_CHARACTER_SET` and `MARIADB_COLLATE` were **ineffective** — they are not supported configuration variables of the official MariaDB Docker image and had no effect on the observed baseline.
+- This discrepancy (`utf8mb4_general_ci` observed vs `utf8mb4_unicode_ci` configured) is **reproducible**, **retained as evidence**, and **not silently normalized or corrected** by the reference environment.
+- `bin/check` now enforces the observed database collation (`utf8mb4_general_ci`) as strict baseline evidence.
+- `technical-reference.json` comparison includes `database.character_set` and `database.collation` fields; a drift in either causes validation failure.

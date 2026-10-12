@@ -6,8 +6,6 @@ services:
       MARIADB_USER: ${DB_USER:-dolidbuser}
       MARIADB_PASSWORD: ${DB_PASSWORD:-dolidbpass}
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
-      MARIADB_CHARACTER_SET: utf8mb4
-      MARIADB_COLLATE: utf8mb4_unicode_ci
     volumes:
       - dolibarr_db_data:/var/lib/mysql
     healthcheck:
