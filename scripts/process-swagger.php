@@ -46,24 +46,24 @@ function sortKeysRecursive(array $data): array {
 function generateInventory(array $swagger): array {
     $inventory = [];
     $httpMethods = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'];
-    
+
     if (!isset($swagger['paths']) || !is_array($swagger['paths'])) {
         return $inventory;
     }
-    
+
     foreach ($swagger['paths'] as $path => $pathItem) {
         if (!is_array($pathItem)) continue;
-        
+
         foreach ($pathItem as $method => $operation) {
             if (!in_array(strtolower($method), $httpMethods, true)) {
                 continue; // Skip non-HTTP method keys like 'parameters', '$ref'
             }
             if (!is_array($operation)) continue;
-            
+
             $operationId = $operation['operationId'] ?? 'no-opid';
             $tags = $operation['tags'] ?? [];
             if (!is_array($tags)) $tags = [];
-            
+
             $inventory[] = [
                 'method' => strtoupper($method),
                 'path' => $path,
@@ -72,23 +72,23 @@ function generateInventory(array $swagger): array {
             ];
         }
     }
-    
+
     // Sort deterministically: by method, then path
     usort($inventory, function($a, $b) {
         $cmp = strcmp($a['method'], $b['method']);
         if ($cmp !== 0) return $cmp;
         return strcmp($a['path'], $b['path']);
     });
-    
+
     return $inventory;
 }
 
 function computeMetadata(array $swagger): array {
     $inventory = generateInventory($swagger);
-    
+
     $pathCount = isset($swagger['paths']) && is_array($swagger['paths']) ? count($swagger['paths']) : 0;
     $operationCount = count($inventory);
-    
+
     $tags = [];
     foreach ($inventory as $op) {
         if ($op['tags'] !== '') {
@@ -98,21 +98,25 @@ function computeMetadata(array $swagger): array {
         }
     }
     $tagCount = count($tags);
-    
+
     $definitionCount = 0;
     if (isset($swagger['definitions']) && is_array($swagger['definitions'])) {
         $definitionCount = count($swagger['definitions']);
     } elseif (isset($swagger['components']['schemas']) && is_array($swagger['components']['schemas'])) {
         $definitionCount = count($swagger['components']['schemas']);
     }
-    
+
     $type = $swagger['swagger'] ?? $swagger['openapi'] ?? 'unknown';
-    
+
+    // Extract basePath from Swagger descriptor
+    $basePath = $swagger['basePath'] ?? '';
+
     // Compute SHA-256 of the normalized swagger for drift detection
     $swagger_sha256 = hash('sha256', json_encode($swagger, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-    
+
     return [
         'type' => $type,
+        'base_path' => $basePath,
         'path_count' => $pathCount,
         'operation_count' => $operationCount,
         'tag_count' => $tagCount,
@@ -131,10 +135,15 @@ function generateTechnicalReference(array $swagger): array {
     $db_image = getenv('DB_IMAGE');
     $charset = getenv('DB_CHARSET');
     $collation = getenv('DB_COLLATION');
-    $db_prefix = getenv('DB_PREFIX');
     $table_count = (int)getenv('DB_TABLE_COUNT');
+    $config_charset = getenv('CONFIG_CHARSET');
+    $config_collation = getenv('CONFIG_COLLATION');
+    $config_prefix = getenv('CONFIG_PREFIX');
     $company_name = getenv('COMPANY_NAME');
-    $company_country = getenv('COMPANY_COUNTRY');
+    $company_country_raw = getenv('COMPANY_COUNTRY_RAW');
+    $country_id = getenv('COUNTRY_ID');
+    $country_code = getenv('COUNTRY_CODE');
+    $country_label = getenv('COUNTRY_LABEL');
     $modules_json = getenv('MODULES_JSON');
     $api_config_json = getenv('API_CONFIG_JSON');
     $swagger_type = getenv('SWAGGER_TYPE');
@@ -158,18 +167,12 @@ function generateTechnicalReference(array $swagger): array {
         }
     }
 
-    // Build API config object
+    // Build API config object from JSON
     $api_config = [];
-    if ($api_config_json !== '') {
-        // Parse the key:value pairs
-        $pairs = explode(',', $api_config_json);
-        foreach ($pairs as $pair) {
-            if (strpos($pair, ':') !== false) {
-                list($k, $v) = explode(':', $pair, 2);
-                $k = trim($k, '"');
-                $v = trim($v, '"');
-                $api_config[$k] = $v;
-            }
+    if ($api_config_json !== '' && $api_config_json !== '{}') {
+        $decoded = json_decode($api_config_json, true);
+        if (is_array($decoded)) {
+            $api_config = $decoded;
         }
     }
 
@@ -180,7 +183,22 @@ function generateTechnicalReference(array $swagger): array {
     if ($tag_count === 0) $tag_count = $metadata['tag_count'];
     if ($definition_count === 0) $definition_count = $metadata['definition_count'];
     if ($swagger_type === 'unknown') $swagger_type = $metadata['type'];
+    if ($base_path === '') $base_path = $metadata['base_path'] ?? '';
     if ($swagger_sha256 === '') $swagger_sha256 = $metadata['swagger_sha256'];
+
+    // Build country object
+    $country = [
+        'raw' => $company_country_raw,
+    ];
+    if ($country_id !== '') {
+        $country['id'] = (int)$country_id;
+    }
+    if ($country_code !== '') {
+        $country['code'] = $country_code;
+    }
+    if ($country_label !== '') {
+        $country['label'] = $country_label;
+    }
 
     $result = [
         "profile" => "baseline",
@@ -193,14 +211,20 @@ function generateTechnicalReference(array $swagger): array {
             "engine" => $db_engine,
             "version" => $db_version,
             "image" => $db_image,
-            "character_set" => $charset,
-            "collation" => $collation,
-            "configured_prefix" => $db_prefix,
-            "table_count" => $table_count
+            "observed" => [
+                "character_set" => $charset,
+                "collation" => $collation,
+                "table_count" => $table_count
+            ],
+            "dolibarr_configuration" => [
+                "character_set" => $config_charset,
+                "collation" => $config_collation,
+                "prefix" => $config_prefix
+            ]
         ],
         "entity" => [
             "company_name" => $company_name,
-            "country_code" => $company_country
+            "country" => $country
         ],
         "modules" => [
             "enabled" => $modules
@@ -227,26 +251,26 @@ switch ($command) {
         $sorted = sortKeysRecursive($normalized);
         echo json_encode($sorted, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         break;
-        
+
     case 'inventory':
         $inventory = generateInventory($swagger);
         foreach ($inventory as $row) {
             echo implode("\t", $row) . "\n";
         }
         break;
-        
+
     case 'metadata':
         $metadata = computeMetadata($swagger);
         echo json_encode($metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         break;
-        
+
     case 'all':
         $normalized = normalizeSwagger($swagger);
         $sorted = sortKeysRecursive($normalized);
         $inventory = generateInventory($sorted);
         $metadata = computeMetadata($sorted);
         $metadata['swagger_sha256'] = hash('sha256', json_encode($sorted, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-        
+
         $result = [
             'swagger' => $sorted,
             'inventory' => $inventory,
@@ -254,14 +278,14 @@ switch ($command) {
         ];
         echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         break;
-        
+
     case 'generate-tr':
         $normalized = normalizeSwagger($swagger);
         $sorted = sortKeysRecursive($normalized);
         $result = generateTechnicalReference($sorted);
         echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         break;
-        
+
     default:
         fwrite(STDERR, "ERROR: Unknown command: $command\n");
         exit(1);

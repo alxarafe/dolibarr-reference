@@ -9,14 +9,25 @@
         "engine": "MariaDB",
         "version": "10.11.19",
         "image": "mariadb:10.11.19-jammy@sha256:dc9dd57be7f46ad6f350c598a331d64f295899c4abac3ec5652eff831fc38a6c",
-        "character_set": "utf8mb4",
-        "collation": "utf8mb4_general_ci",
-        "configured_prefix": "llx_",
-        "table_count": 410
+        "observed": {
+            "character_set": "utf8mb4",
+            "collation": "utf8mb4_general_ci",
+            "table_count": 410
+        },
+        "dolibarr_configuration": {
+            "character_set": "utf8mb4",
+            "collation": "utf8mb4_unicode_ci",
+            "prefix": "llx_"
+        }
     },
     "entity": {
         "company_name": "Alxarafe Reference",
-        "country_code": "4:ES:Spain"
+        "country": {
+            "raw": "4:ES:Spain",
+            "id": 4,
+            "code": "ES",
+            "label": "Spain"
+        }
     },
     "modules": {
         "enabled": [
