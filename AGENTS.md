@@ -108,7 +108,7 @@ Host assumptions are limited to:
 
 ```text
 Git
-POSIX-compatible shell
+Bash
 Docker
 Docker Compose
 ```

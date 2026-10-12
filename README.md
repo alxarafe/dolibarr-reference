@@ -52,7 +52,7 @@ The host only requires:
 Git
 Docker
 Docker Compose
-POSIX-compatible shell
+Bash
 ```
 
 Runtime tooling and application dependencies must remain inside containers.
