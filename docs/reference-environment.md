@@ -17,12 +17,13 @@ alxarafe/dolibarr-reference
 alxarafe/alixar
     = replacement backend
       New Java backend implementation.
-      Targets: API compatibility with Dolibarr reference, same database schema.
+      Targets: its own canonical API, independent database schema
+      informed by Dolibarr reference characterization.
 
 alxarafe/solucar-web
     = replacement frontend
       New Angular frontend implementation.
-      Targets: UI/UX parity with Dolibarr, consumes Alixar API.
+      Targets: UI/UX inspired by Dolibarr, consumes Alixar canonical API.
 ```
 
 ## Purpose

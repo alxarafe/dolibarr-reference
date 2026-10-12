@@ -189,6 +189,6 @@ original licenses:
   - Source: https://mariadb.org/
   - This repository does not copy, modify, or relicense MariaDB code.
 
-This repository's own code (docker-compose.yaml, scripts in bin/, documentation
+This repository's own code (compose.yaml, scripts in bin/, documentation
 in docs/, AGENTS.md, .github/workflows/ci.yml) is licensed under Apache-2.0
 as stated above.
