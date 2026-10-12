@@ -38,6 +38,7 @@ services:
       DOLI_AUTH: dolibarr
       DOLI_CRON_KEY: ${CRON_KEY:-}
       DOLIBARR_REFERENCE_API_KEY: ${DOLIBARR_REFERENCE_API_KEY:-}
+      PHP_INI_DATE_TIMEZONE: Europe/Madrid
     volumes:
       - dolibarr_documents:/var/www/documents
       - ./scripts/docker-init.d:/var/www/scripts/docker-init.d:ro

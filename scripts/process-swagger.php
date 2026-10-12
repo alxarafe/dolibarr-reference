@@ -153,6 +153,10 @@ function generateTechnicalReference(array $swagger): array {
     $tag_count = (int)getenv('TAG_COUNT');
     $definition_count = (int)getenv('DEFINITION_COUNT');
     $swagger_sha256 = getenv('SWAGGER_SHA256');
+    // Profile configuration
+    $lang_default = getenv('LANG_DEFAULT');
+    $runtime_timezone = getenv('RUNTIME_TIMEZONE');
+    $currency_main = getenv('CURRENCY_MAIN');
 
     // Build modules array
     $modules = [];
@@ -200,6 +204,30 @@ function generateTechnicalReference(array $swagger): array {
         $country['label'] = $country_label;
     }
 
+    // Build profile object
+    $profile = [
+        'country' => $country,
+    ];
+    if ($lang_default !== '') {
+        $profile['language'] = [
+            'configured' => $lang_default,
+            'effective' => $lang_default
+        ];
+    }
+    if ($runtime_timezone !== '') {
+        $profile['timezone'] = [
+            'configured' => $runtime_timezone,
+            'effective' => $runtime_timezone
+        ];
+    }
+    if ($currency_main !== '') {
+        $profile['currency'] = [
+            'configured' => $currency_main,
+            'effective' => $currency_main,
+            'source' => 'MAIN_MONNAIE'
+        ];
+    }
+
     $result = [
         "profile" => "baseline",
         "dolibarr" => [
@@ -224,8 +252,8 @@ function generateTechnicalReference(array $swagger): array {
         ],
         "entity" => [
             "company_name" => $company_name,
-            "country" => $country
         ],
+        "profile" => $profile,
         "modules" => [
             "enabled" => $modules
         ],

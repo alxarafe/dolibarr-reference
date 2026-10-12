@@ -37,7 +37,10 @@ The current baseline automatically configures:
 
 - Dolibarr administrator
 - company: `Alxarafe Reference`
-- country: Spain
+- country: Spain (ES)
+- language: Spanish (es_ES)
+- timezone: Europe/Madrid
+- currency: EUR (via MAIN_MONNAIE)
 - REST API module
 - Third Parties module
 - reproducible REST authentication

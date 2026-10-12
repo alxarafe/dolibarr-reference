@@ -68,6 +68,9 @@ This initial bootstrap delivers:
 
 - ✅ Dolibarr 24.0.1 installed automatically from empty MariaDB
 - ✅ Company "Alxarafe Reference" (ES) configured
+- ✅ Language: Spanish (es_ES)
+- ✅ Timezone: Europe/Madrid
+- ✅ Currency: EUR (via MAIN_MONNAIE)
 - ✅ REST API module (`Api`) enabled
 - ✅ Third Parties module (`Societe`) enabled
 - ✅ User module (`User`) enabled
@@ -108,7 +111,8 @@ The reference environment captures a **deterministic, versioned technical contra
 | Dolibarr | version, source commit, image + digest |
 | MariaDB | version, image + digest, charset, collation, table count |
 | Database | configured prefix (`llx_` observed, not hardcoded) |
-| Entity | company name, country code |
+| Entity | company name |
+| Profile | country (raw, id, code, label), language (configured/effective), timezone (configured/effective), currency (configured/effective) |
 | Modules | enabled: `Api`, `Societe`, `User` (queried from DB, not assumed) |
 | API Config | whitelisted constants (`API_*`, `MAIN_LANG_DEFAULT`) |
 | Descriptor | type (Swagger 2.0), basePath, path/op/tag/def counts, SHA-256 |

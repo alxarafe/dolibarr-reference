@@ -78,6 +78,13 @@ MODULES=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB
 COMPANY_NAME=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
 COMPANY_COUNTRY_RAW=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_COUNTRY' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
 
+# 7b. Get profile configuration (language, timezone, currency)
+LANG_DEFAULT=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_LANG_DEFAULT' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+# Timezone from PHP runtime
+RUNTIME_TIMEZONE=$(docker exec "$WEB_CONTAINER" php -r 'echo date_default_timezone_get();' 2>/dev/null | tr -d '\r\n' || echo "")
+# Currency from MAIN_MONNAIE constant (base currency, independent of Multicurrency module)
+CURRENCY_MAIN=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_MONNAIE' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+
 # 8. Get relevant API configuration (whitelist only) - use HEX transport for lossless encoding
 # Query returns rows of: name<TAB>|<TAB>hex(value)
 API_CONFIG_JSON=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "
@@ -201,6 +208,9 @@ cat "$OUTPUT_DIR/swagger_normalized.json" | docker exec -i \
     -e TAG_COUNT="$TAG_COUNT" \
     -e DEFINITION_COUNT="$DEFINITION_COUNT" \
     -e SWAGGER_SHA256="$SWAGGER_SHA256" \
+    -e LANG_DEFAULT="$LANG_DEFAULT" \
+    -e RUNTIME_TIMEZONE="$RUNTIME_TIMEZONE" \
+    -e CURRENCY_MAIN="$CURRENCY_MAIN" \
     "$WEB_CONTAINER" php /var/www/scripts/process-swagger.php generate-tr > "$OUTPUT_DIR/technical-reference.json"
 
 # 18. Copy final artifacts to output directory (swagger.json and api-inventory.tsv)

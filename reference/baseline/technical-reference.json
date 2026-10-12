@@ -1,5 +1,25 @@
 {
-    "profile": "baseline",
+    "profile": {
+        "country": {
+            "raw": "4:ES:Spain",
+            "id": 4,
+            "code": "ES",
+            "label": "Spain"
+        },
+        "language": {
+            "configured": "es_ES",
+            "effective": "es_ES"
+        },
+        "timezone": {
+            "configured": "Europe/Madrid",
+            "effective": "Europe/Madrid"
+        },
+        "currency": {
+            "configured": "EUR",
+            "effective": "EUR",
+            "source": "MAIN_MONNAIE"
+        }
+    },
     "dolibarr": {
         "version": "24.0.1",
         "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25",
@@ -21,13 +41,7 @@
         }
     },
     "entity": {
-        "company_name": "Alxarafe Reference",
-        "country": {
-            "raw": "4:ES:Spain",
-            "id": 4,
-            "code": "ES",
-            "label": "Spain"
-        }
+        "company_name": "Alxarafe Reference"
     },
     "modules": {
         "enabled": [
@@ -37,7 +51,7 @@
         ]
     },
     "api_configuration": {
-        "MAIN_LANG_DEFAULT": "auto"
+        "MAIN_LANG_DEFAULT": "es_ES"
     },
     "descriptor": {
         "type": "2.0",
