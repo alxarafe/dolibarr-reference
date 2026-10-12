@@ -8,7 +8,7 @@
 
 | Characterization | Profile | State | Updated |
 |------------------|---------|-------|---------|
-| — | — | — | — |
+| CONTACT-REF-001 | baseline-ES | observed | 2026-10-12 |
 
 ---
 
@@ -16,7 +16,7 @@
 
 | Characterization | Source Files | Extension Points | Evidence |
 |------------------|--------------|------------------|----------|
-| — | — | — | — |
+| CONTACT-REF-001 | 12 files traced | 8 mechanisms found | API, DB, UI, Source, Config |
 
 ---
 

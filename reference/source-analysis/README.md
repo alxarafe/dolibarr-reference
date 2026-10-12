@@ -50,4 +50,13 @@ When recording a source trace in a characterization:
 
 | File | Characterizations | Notes |
 |------|-------------------|-------|
-| — | — | — |
+| `htdocs/societe/class/api_contacts.class.php` | CONTACT-REF-001 | API endpoints: post, get, index, put, delete, _validate |
+| `htdocs/contact/class/contact.class.php` | CONTACT-REF-001 | Contact entity, field definitions, create/update/delete |
+| `htdocs/contact/card.php` | CONTACT-REF-001 | UI entry point (view/edit/create) |
+| `htdocs/contact/list.php` | CONTACT-REF-001 | List view, search parameters |
+| `htdocs/contact/canvas/default/tpl/contactcard_create.tpl.php` | CONTACT-REF-001 | Create form template |
+| `htdocs/contact/canvas/default/tpl/contactcard_edit.tpl.php` | CONTACT-REF-001 | Edit form template |
+| `htdocs/contact/canvas/default/tpl/contactcard_view.tpl.php` | CONTACT-REF-001 | View template |
+| `htdocs/contact/canvas/default/tpl/contactcard_edit.tpl.php` | CONTACT-REF-001 | Edit form template |
+| `htdocs/contact/class/contact.class.php` | CONTACT-REF-001 | Contact entity, fields, create/update/delete |
+| `htdocs/societe/class/api_contacts.class.php` | CONTACT-REF-001 | API endpoints, validation, permissions |

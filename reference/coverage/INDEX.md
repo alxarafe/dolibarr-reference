@@ -4,7 +4,7 @@
 
 | ID | Name | Profile | State | Modules | API | UI | Persistence | Business Rules | Source Files | Ext. Points | Evidence | Updated |
 |----|------|---------|-------|---------|-----|----|-------------|----------------|--------------|-------------|----------|---------|
-| — | *(none yet)* | — | — | — | — | — | — | — | — | — | — | — |
+| CONTACT-REF-001 | Basic contact lifecycle | baseline-ES | observed | API, SOCIETE, USER | ✓ | ✓ | ✓ | ✓ | 12 | 8 | API, DB, UI, Source | 2026-10-12 |
 
 ---
 
@@ -31,7 +31,7 @@ Add a row for each characterization completed. Keep the table sorted by ID.
 
 | ID | Name | Note |
 |----|------|------|
-| `CONTACT-REF-001` | Contact basic lifecycle | Reserved for next task |
+| `CONTACT-REF-001` | Contact basic lifecycle | Completed |
 
 ---
 
