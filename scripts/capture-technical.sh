@@ -46,13 +46,13 @@ fi
 DOLIBARR_VERSION=$(docker exec "$WEB_CONTAINER" grep "define('DOL_MINOR_VERSION'" /var/www/html/version.inc.php 2>/dev/null | sed "s/.*'DOL_MINOR_VERSION', '\([^']*\)'.*/\1/" | tr -d '\r\n' || echo "unknown")
 DOLIBARR_VERSION="24.${DOLIBARR_VERSION}"
 
-# 3. Get MariaDB version (observed from runtime) and derive semantic version
-MARIADB_VERSION_RAW=$(docker exec "$DB_CONTAINER" mariadb --version 2>/dev/null | head -1 || echo "unknown")
+# 3. Get MariaDB server version (observed from runtime) and derive semantic version
+MARIADB_VERSION_RAW=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT VERSION();" 2>/dev/null | head -1 || echo "unknown")
 # Derive semantic version from raw output (e.g., "10.11.19" from "10.11.19-MariaDB-...")
-MARIADB_VERSION=$(echo "$MARIADB_VERSION_RAW" | sed -E 's/.*Distrib ([0-9]+\.[0-9]+\.[0-9]+).*/\1/' | head -1)
+MARIADB_VERSION=$(echo "$MARIADB_VERSION_RAW" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+).*/\1/' | head -1)
 if [[ -z "$MARIADB_VERSION" || "$MARIADB_VERSION" == "$MARIADB_VERSION_RAW" ]]; then
     # Fallback: try to extract first X.Y.Z pattern
-    MARIADB_VERSION=$(echo "$MARIADB_VERSION_RAW" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
+    MARIADB_VERSION=$(echo "$MARIADB_VERSION_RAW" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "unknown")
 fi
 
 # 4. Get observed database charset/collation and table count
@@ -77,17 +77,34 @@ MODULES=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB
 COMPANY_NAME=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
 COMPANY_COUNTRY_RAW=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_COUNTRY' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
 
-# 8. Get relevant API configuration (whitelist only) - use JSON_OBJECTAGG for safe transport
+# 8. Get relevant API configuration (whitelist only) - use HEX transport for lossless encoding
+# Query returns rows of: name<TAB>|<TAB>hex(value)
 API_CONFIG_JSON=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "
-SELECT JSON_OBJECTAGG(name, value)
+SELECT name, '|', HEX(value)
 FROM ${DB_PREFIX}const
 WHERE name IN (
     'API_EXPLORER_DISABLED', 'API_ENDPOINT_RULES', 'API_RESTRICT_ON_IP',
     'API_DISABLE_COMPRESSION', 'API_IN_TOKEN_TABLE', 'MAIN_LANG_DEFAULT'
-);
-" 2>/dev/null || echo "{}")
-# Ensure valid JSON object even if no rows
-if [[ -z "$API_CONFIG_JSON" || "$API_CONFIG_JSON" == "NULL" ]]; then
+)
+ORDER BY name;
+" 2>/dev/null)
+
+# Build JSON object from HEX-encoded rows
+if [[ -n "$API_CONFIG_JSON" ]]; then
+    # Use PHP to properly decode HEX values and build JSON
+    API_CONFIG_JSON=$(echo "$API_CONFIG_JSON" | docker exec -i "$WEB_CONTAINER" php -r '
+$input = file_get_contents("php://stdin");
+$config = [];
+foreach (explode("\n", trim($input)) as $line) {
+    if ($line === "") continue;
+    $parts = explode("\t", $line);
+    if (count($parts) >= 3) {
+        $config[$parts[0]] = hex2bin($parts[2]);
+    }
+}
+echo json_encode($config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+')
+else
     API_CONFIG_JSON="{}"
 fi
 
