@@ -22,8 +22,13 @@ set -a
 source "$ENV_FILE"
 set +a
 
-# Generate ephemeral API key for this check run
-EPHEMERAL_API_KEY=$(openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | xxd -p -c 32)
+# Generate ephemeral API key for this check run using Docker (no host openssl/xxd)
+EPHEMERAL_API_KEY=$(docker run --rm --entrypoint php "${DOLIBARR_IMAGE:-dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce}" -r 'echo bin2hex(random_bytes(32));' 2>/dev/null)
+
+if [[ -z "$EPHEMERAL_API_KEY" ]]; then
+    echo "ERROR: Failed to generate ephemeral API key using Docker" >&2
+    exit 1
+fi
 
 # Use a different port for isolated check to avoid conflicts
 export DOLIBARR_REFERENCE_PORT="48241"
@@ -149,16 +154,18 @@ fi
 # Use PHP to reliably parse the configuration file
 DB_PREFIX=$(docker exec "$WEB_CONTAINER" php -r "
 require '/var/www/html/conf/conf.php';
-echo \$dolibarr_main_db_prefix ?? 'llx_';
+echo \$dolibarr_main_db_prefix;
 " 2>/dev/null | tr -d '\r\n')
 if [[ -z "$DB_PREFIX" ]]; then
-    DB_PREFIX="llx_"
+    echo "   ERROR: Could not determine Dolibarr database prefix from conf.php" >&2
+    exit 1
 fi
 echo "   Database prefix: $DB_PREFIX"
 
-# Verify HTTP response
+# Verify HTTP response using curl inside the web container (no host curl)
 echo "5/10 Verifying HTTP response..."
-if ! curl -fsS "http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/" >/dev/null; then
+HTTP_CODE=$(docker exec "$WEB_CONTAINER" curl -sS -w "%{http_code}" -o /dev/null "http://127.0.0.1:80/" 2>/dev/null || echo "000")
+if [[ "$HTTP_CODE" != "200" ]]; then
     echo "   ERROR: HTTP request failed" >&2
     exit 1
 fi
@@ -206,12 +213,26 @@ echo "   Third Parties module: enabled"
 echo "9/10 Testing authenticated REST API access..."
 BASE_URL="http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}"
 
+# Helper function to make HTTP requests using curl inside the web container (no host curl)
+# Returns: body (stdout) and HTTP code (via global HTTP_CODE variable)
+http_request() {
+    local url="$1"
+    local api_key="$2"
+    # Rewrite URL to use internal port 80 (inside container)
+    local internal_url=$(echo "$url" | sed "s|http://127.0.0.1:[0-9]*|http://127.0.0.1:80|")
+    local response
+    response=$(docker exec "$WEB_CONTAINER" curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${api_key}" -H "Accept: application/json" "$internal_url" 2>/dev/null || echo -e "\n000")
+    # Extract HTTP code (last line) and body (everything before)
+    HTTP_CODE=$(echo "$response" | tail -1)
+    HTTP_BODY=$(echo "$response" | head -n -1)
+}
+
 # Positive test: valid API key
 # Use /users/info endpoint which returns 200 with current user info when authenticated
 echo "   Testing valid API key (expecting HTTP 200)..."
-response=$(curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${EPHEMERAL_API_KEY}" -H "Accept: application/json" "${BASE_URL}/api/index.php/users/info" 2>/dev/null || echo -e "\n000")
-http_code=$(echo "$response" | tail -1)
-body=$(echo "$response" | head -n -1)
+http_request "${BASE_URL}/api/index.php/users/info" "${EPHEMERAL_API_KEY}"
+http_code="$HTTP_CODE"
+body="$HTTP_BODY"
 
 if [[ "$http_code" != "200" ]]; then
     echo "   ERROR: Expected HTTP 200, got HTTP $http_code" >&2
@@ -237,9 +258,9 @@ echo "   HTTP 200 OK - Valid JSON, authenticated user: $actual_login"
 
 # Negative test: invalid API key (same endpoint)
 echo "   Testing invalid API key (expecting HTTP 401)..."
-invalid_key="invalid-key-$(openssl rand -hex 16 2>/dev/null || head -c 16 /dev/urandom | xxd -p -c 16)"
-response=$(curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${invalid_key}" -H "Accept: application/json" "${BASE_URL}/api/index.php/users/info" 2>/dev/null || echo -e "\n000")
-http_code=$(echo "$response" | tail -1)
+invalid_key="invalid-key-$(docker run --rm --entrypoint php "${DOLIBARR_IMAGE:-dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce}" -r 'echo bin2hex(random_bytes(16));' 2>/dev/null)"
+http_request "${BASE_URL}/api/index.php/users/info" "${invalid_key}"
+http_code="$HTTP_CODE"
 
 if [[ "$http_code" != "401" ]]; then
     echo "   ERROR: Expected HTTP 401 for invalid key, got HTTP $http_code" >&2
@@ -265,9 +286,9 @@ fi
 # Verify Swagger endpoint and descriptor (DOL-REF-002)
 echo "10/14 Verifying Swagger endpoint..."
 SWAGGER_URL="${BASE_URL}/api/index.php/explorer/swagger.json"
-swagger_response=$(curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${EPHEMERAL_API_KEY}" -H "Accept: application/json" "$SWAGGER_URL" 2>/dev/null || echo -e "\n000")
-swagger_http_code=$(echo "$swagger_response" | tail -1)
-swagger_body=$(echo "$swagger_response" | head -n -1)
+http_request "$SWAGGER_URL" "${EPHEMERAL_API_KEY}"
+swagger_http_code="$HTTP_CODE"
+swagger_body="$HTTP_BODY"
 
 if [[ "$swagger_http_code" != "200" ]]; then
     echo "   ERROR: Swagger endpoint returned HTTP $swagger_http_code" >&2

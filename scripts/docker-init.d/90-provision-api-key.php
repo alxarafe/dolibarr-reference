@@ -8,8 +8,8 @@
  * It uses the User class to set the api_key field in the Dolibarr user table
  * (database prefix is configurable, default is llx_).
  *
- * The API key is provided via DOLIBARR_REFERENCE_API_KEY environment variable.
- * If not set, a secure random key is generated (for development only).
+ * The API key MUST be provided via DOLIBARR_REFERENCE_API_KEY environment variable.
+ * If not set, the script fails explicitly - no silent generation.
  */
 
 require_once '/var/www/html/master.inc.php';
@@ -19,10 +19,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 $apiKey = getenv('DOLIBARR_REFERENCE_API_KEY');
 
 if (empty($apiKey)) {
-    // Generate a secure random API key for development
-    // Format: 64 hex characters (32 bytes)
-    $apiKey = bin2hex(random_bytes(32));
-    echo "[provision-api-key] Generated ephemeral API key for development\n";
+    echo "[provision-api-key] ERROR: DOLIBARR_REFERENCE_API_KEY environment variable is not set\n";
+    echo "[provision-api-key] API key must be provided by repository tooling, not generated internally\n";
+    exit(1);
 } else {
     echo "[provision-api-key] Using API key from environment\n";
 }

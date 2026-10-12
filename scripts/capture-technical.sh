@@ -36,10 +36,11 @@ DB_IMAGE="${DB_IMAGE:-mariadb:10.11.19-jammy@sha256:dc9dd57be7f46ad6f350c598a331
 # 1. Get database prefix from Dolibarr configuration
 DB_PREFIX=$(docker exec "$WEB_CONTAINER" php -r "
 require '/var/www/html/conf/conf.php';
-echo \$dolibarr_main_db_prefix ?? 'llx_';
+echo \$dolibarr_main_db_prefix;
 " 2>/dev/null | tr -d '\r\n')
 if [[ -z "$DB_PREFIX" ]]; then
-    DB_PREFIX="llx_"
+    echo "ERROR: Could not determine Dolibarr database prefix from conf.php" >&2
+    exit 1
 fi
 
 # 2. Get Dolibarr version
@@ -108,14 +109,19 @@ else
     API_CONFIG_JSON="{}"
 fi
 
-# 9. Fetch Swagger descriptor
+# 9. Fetch Swagger descriptor using curl inside the web container (no host curl)
+# Use internal port 80 since we're executing inside the container
 SWAGGER_URL="${BASE_URL}/api/index.php/explorer/swagger.json"
-curl -fsS -H "DOLAPIKEY: ${API_KEY}" -H "Accept: application/json" "$SWAGGER_URL" > "$OUTPUT_DIR/swagger_raw.json"
+INTERNAL_SWAGGER_URL=$(echo "$SWAGGER_URL" | sed "s|http://127.0.0.1:[0-9]*|http://127.0.0.1:80|")
+docker exec "$WEB_CONTAINER" curl -fsS -H "DOLAPIKEY: ${API_KEY}" -H "Accept: application/json" "$INTERNAL_SWAGGER_URL" > "$OUTPUT_DIR/swagger_raw.json"
 
 if [[ ! -s "$OUTPUT_DIR/swagger_raw.json" ]]; then
     echo "ERROR: Failed to fetch Swagger descriptor" >&2
     exit 1
 fi
+
+# Ensure process-swagger.php is available in the web container
+docker cp "$(dirname "$0")/process-swagger.php" "$WEB_CONTAINER:/var/www/scripts/process-swagger.php" 2>/dev/null || true
 
 # 10. Normalize Swagger descriptor using PHP in container (no host jq dependency)
 # Only removes host (environment-dependent), sorts keys deterministically

@@ -7,42 +7,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 COMPOSE_FILE="$PROJECT_ROOT/compose.yaml"
 
-# Load .env if present
-if [[ -f "$PROJECT_ROOT/.env" ]]; then
-    set -a
-    # shellcheck source=/dev/null
-    source "$PROJECT_ROOT/.env"
-    set +a
-fi
+# Ensure API key exists in .env (generates if missing)
+# This also loads .env into environment
+source "$PROJECT_ROOT/scripts/ensure-api-key.sh"
 
 export DOLIBARR_REFERENCE_PORT="${DOLIBARR_REFERENCE_PORT:-48240}"
-
-# Ensure DOLIBARR_REFERENCE_API_KEY is set and persisted in .env
-if [[ -z "${DOLIBARR_REFERENCE_API_KEY:-}" ]]; then
-    # Generate a secure random API key
-    GENERATED_KEY=$(openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | xxd -p -c 32)
-    export DOLIBARR_REFERENCE_API_KEY="$GENERATED_KEY"
-
-    # Persist to .env (create if missing, preserve existing content)
-    if [[ ! -f "$PROJECT_ROOT/.env" ]]; then
-        # Create .env from .env.example if it exists, otherwise create minimal
-        if [[ -f "$PROJECT_ROOT/.env.example" ]]; then
-            cp "$PROJECT_ROOT/.env.example" "$PROJECT_ROOT/.env"
-        else
-            touch "$PROJECT_ROOT/.env"
-        fi
-    fi
-    # Update or add the key in .env
-    if grep -q "^DOLIBARR_REFERENCE_API_KEY=" "$PROJECT_ROOT/.env"; then
-        sed -i "s/^DOLIBARR_REFERENCE_API_KEY=.*/DOLIBARR_REFERENCE_API_KEY=$GENERATED_KEY/" "$PROJECT_ROOT/.env"
-    else
-        echo "DOLIBARR_REFERENCE_API_KEY=$GENERATED_KEY" >> "$PROJECT_ROOT/.env"
-    fi
-    # Ensure reasonable permissions
-    chmod 600 "$PROJECT_ROOT/.env" 2>/dev/null || true
-fi
-
-export DOLIBARR_REFERENCE_API_KEY
 
 echo "=== RESET: Dolibarr Reference Environment ==="
 echo "WARNING: This will DESTROY all laboratory data (database and documents)."
@@ -59,9 +28,14 @@ echo "Stopping services..."
 docker compose -f "$COMPOSE_FILE" down -v
 
 echo "Removing project volumes..."
-# Remove only the named volumes for this project
-docker volume rm dolibarr-reference_dolibarr_db_data 2>/dev/null || true
-docker volume rm dolibarr-reference_dolibarr_documents 2>/dev/null || true
+# Use Compose to get the actual project name and volume names
+COMPOSE_PROJECT_NAME=$(docker compose -f "$COMPOSE_FILE" config --services 2>/dev/null | head -1 | sed 's/.*_//' || echo "dolibarr-reference")
+# More reliable: get project name from docker compose
+PROJECT_NAME=$(docker compose -f "$COMPOSE_FILE" ls --format json 2>/dev/null | jq -r '.[0].Name // "dolibarr-reference"' 2>/dev/null || echo "dolibarr-reference")
+
+# Remove volumes using docker compose down -v already does this, but be explicit
+docker volume rm "${PROJECT_NAME}_dolibarr_db_data" 2>/dev/null || true
+docker volume rm "${PROJECT_NAME}_dolibarr_documents" 2>/dev/null || true
 
 echo "Starting fresh environment..."
 docker compose -f "$COMPOSE_FILE" up -d
@@ -118,8 +92,13 @@ echo "  Login: ${ADMIN_LOGIN:-admin}"
 echo "  Password: (see .env or .env.example)"
 echo ""
 echo "REST API Authentication:"
-masked_key="${DOLIBARR_REFERENCE_API_KEY:0:8}****${DOLIBARR_REFERENCE_API_KEY: -4}"
-echo "  DOLAPIKEY: ${masked_key}"
+# Mask the key for display (first 8, last 4) - safe under set -u
+if [[ -n "${DOLIBARR_REFERENCE_API_KEY:-}" ]]; then
+    masked_key="${DOLIBARR_REFERENCE_API_KEY:0:8}****${DOLIBARR_REFERENCE_API_KEY: -4}"
+    echo "  DOLAPIKEY: ${masked_key}"
+else
+    echo "  DOLAPIKEY: (not configured)"
+fi
 echo "  (Full key stored in .env)"
 echo ""
 echo "Database version:"
