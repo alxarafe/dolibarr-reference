@@ -60,3 +60,12 @@ When recording a source trace in a characterization:
 | `htdocs/contact/canvas/default/tpl/contactcard_edit.tpl.php` | CONTACT-REF-001 | Edit form template |
 | `htdocs/contact/class/contact.class.php` | CONTACT-REF-001 | Contact entity, fields, create/update/delete |
 | `htdocs/societe/class/api_contacts.class.php` | CONTACT-REF-001 | API endpoints, validation, permissions |
+| `htdocs/societe/class/api_thirdparties.class.php` | THIRDPARTY-REF-001 | Third party API: post, get, index, put, delete, `_validate`, `_fetch` |
+| `htdocs/societe/class/societe.class.php` | THIRDPARTY-REF-001 | Third party entity, defaults, verify, create/update/delete, cascade |
+| `htdocs/societe/card.php` | THIRDPARTY-REF-001 | Third party UI create/edit/view/delete, required name, classification checkboxes |
+| `htdocs/societe/list.php` | THIRDPARTY-REF-001 | Third party list, search fields, default sort, permissions |
+| `htdocs/contact/class/contact.class.php` | THIRDPARTY-REF-001 | Contact `fk_soc`/`socid` mapping and `socname` join |
+| `htdocs/societe/class/api_contacts.class.php` | THIRDPARTY-REF-001 | Contact `socid` validation against third party |
+| `htdocs/core/class/commonobject.class.php` | THIRDPARTY-REF-001 | `statut`, `isObjectUsed`, `deleteByParentField` |
+| `htdocs/core/class/api.class.php` | THIRDPARTY-REF-001 | `_cleanObjectDatas` response serialization |
+| `htdocs/langs/es_ES/companies.lang` | THIRDPARTY-REF-001 | Spanish fiscal identifier labels |

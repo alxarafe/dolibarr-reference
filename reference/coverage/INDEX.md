@@ -5,6 +5,7 @@
 | ID | Name | Profile | State | Modules | API | UI | Persistence | Business Rules | Source Files | Ext. Points | Evidence | Updated |
 |----|------|---------|-------|---------|-----|----|-------------|----------------|--------------|-------------|----------|---------|
 | CONTACT-REF-001 | Basic contact lifecycle | baseline-ES | observed | API, SOCIETE, USER | ✓ | ✓ | ✓ | ✓ | 12 | 8 | API, DB, UI, Source | 2026-10-12 |
+| THIRDPARTY-REF-001 | Basic third party lifecycle | baseline-ES | observed | API, SOCIETE, USER | ✓ | partial | ✓ | ✓ | 14 | 8 | API, DB, UI(source), Source, Swagger, Config | 2026-10-26 |
 
 ---
 
