@@ -43,3 +43,12 @@
 | CONTACT-REF-001 | Permission Check | `api_contacts.class.php`, `card.php` | `hasRight('societe', 'contact', 'lire/crear/supprimer')` | API/UI access control | Enforced |
 | CONTACT-REF-001 | Configuration (llx_const) | `llx_const` table | `MAIN_LANG_DEFAULT`, `MAIN_MONNAIE`, etc. | Config-driven behavior | ES profile sets es_ES, EUR |
 | CONTACT-REF-001 | Permission (UI) | `card.php`, `list.php` | `hasRight('societe', 'contact', 'lire/crear/supprimer')` | UI action visibility | Enforced |
+| THIRDPARTY-REF-001 | Trigger (Agenda) | `interface_50_modAgenda_ActionsAuto.class.php` | COMPANY_CREATE/MODIFY/DELETE | Auto agenda actions | No (Agenda not enabled) |
+| THIRDPARTY-REF-001 | Trigger (Stripe) | `interface_80_modStripe_Stripe.class.php` | COMPANY_CREATE/MODIFY | Stripe synchronization | No (Stripe not enabled) |
+| THIRDPARTY-REF-001 | Trigger (Zapier) | `interface_95_modZapier_ZapierTriggers.class.php` | COMPANY_CREATE/MODIFY/DELETE | Zapier integration | No (Zapier not enabled) |
+| THIRDPARTY-REF-001 | Hook | `core/class/hookmanager.class.php` | `thirdpartycard`, `globalcard`, `thirdpartylist` | UI/action customization | Available, not used |
+| THIRDPARTY-REF-001 | Extrafields | `core/class/extrafields.class.php` | `elementtype='societe'` | Dynamic company fields | No extrafields defined |
+| THIRDPARTY-REF-001 | Permission Check | `api_thirdparties.class.php`, `card.php`, `list.php` | `societe/lire`, `societe/creer`, `societe/supprimer` | API/UI access control | Enforced |
+| THIRDPARTY-REF-001 | Country Condition | `societe/class/societe.class.php:1296` | `country_id == mysoc->country_id` | Mandatory fiscal checks (constant-gated) | Profile ES, no mandatory constants set |
+| THIRDPARTY-REF-001 | Configuration (llx_const) | `llx_const` table | `SOCIETE_*`, `THIRDPARTY_*`, module constants | Fiscal/email/default rules | Only modules/language/currency constants set |
+| THIRDPARTY-REF-001 | Multi-entity | `societe.class.php`, API list | `entity` column / `getEntity('societe')` | Entity scoping | Entity 1 used |
