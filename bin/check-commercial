@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+# bin/check-commercial - Validate the isolated commercial reference profile
+# Strict shell policy
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+COMPOSE_FILE="$PROJECT_ROOT/compose.commercial.yaml"
+ENV_FILE="$PROJECT_ROOT/.env.commercial.example"
+COMPOSE_PROJECT_NAME="dolibarr-reference-commercial-check"
+DOLIBARR_IMAGE="${DOLIBARR_IMAGE:-dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce}"
+
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo "ERROR: $ENV_FILE not found" >&2
+    exit 1
+fi
+
+set -a
+# shellcheck source=/dev/null
+source "$ENV_FILE"
+set +a
+
+export COMPOSE_PROJECT_NAME
+export DOLIBARR_REFERENCE_PORT="48243"
+export DOLIBARR_REFERENCE_API_KEY
+DOLIBARR_REFERENCE_API_KEY=$(docker run --rm --entrypoint php "$DOLIBARR_IMAGE" -r 'echo bin2hex(random_bytes(32));' 2>/dev/null)
+if [[ -z "$DOLIBARR_REFERENCE_API_KEY" ]]; then
+    echo "ERROR: Failed to generate ephemeral API key using Docker" >&2
+    exit 1
+fi
+
+echo "=== Dolibarr Commercial Profile Validation ==="
+echo "Isolated project: $COMPOSE_PROJECT_NAME"
+echo "Ephemeral API key: ${DOLIBARR_REFERENCE_API_KEY:0:8}****${DOLIBARR_REFERENCE_API_KEY: -4}"
+echo ""
+
+cleanup() {
+    local exit_code=$?
+    echo ""
+    echo "--- Cleanup ---"
+    docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
+    if [[ $exit_code -ne 0 ]]; then
+        echo "VALIDATION FAILED" >&2
+    else
+        echo "VALIDATION PASSED"
+    fi
+    exit $exit_code
+}
+trap cleanup EXIT
+
+docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" down -v --remove-orphans 2>/dev/null || true
+
+echo "1/8 Starting MariaDB..."
+docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" up -d database
+
+echo "2/8 Waiting for database readiness..."
+timeout=120
+elapsed=0
+while [[ $elapsed -lt $timeout ]]; do
+    db_status=$(docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q database | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    if [[ "$db_status" == "healthy" ]]; then
+        echo "   Database healthy."
+        break
+    fi
+    sleep 2
+    elapsed=$((elapsed + 2))
+done
+if [[ $elapsed -ge $timeout ]]; then
+    echo "   ERROR: Database not ready" >&2
+    docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs database
+    exit 1
+fi
+
+echo "3/8 Starting Dolibarr..."
+docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" up -d dolibarr
+
+echo "4/8 Waiting for Dolibarr installation and web readiness..."
+timeout=240
+elapsed=0
+while [[ $elapsed -lt $timeout ]]; do
+    web_status=$(docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q dolibarr | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    if [[ "$web_status" == "healthy" ]]; then
+        echo "   Dolibarr healthy."
+        break
+    fi
+    sleep 3
+    elapsed=$((elapsed + 3))
+done
+if [[ $elapsed -ge $timeout ]]; then
+    echo "   ERROR: Dolibarr not ready" >&2
+    docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs dolibarr
+    exit 1
+fi
+
+DB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q database)
+WEB_CONTAINER=$(docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q dolibarr)
+
+echo "5/8 Verifying Dolibarr version and company..."
+dolibarr_version=$(docker exec "$WEB_CONTAINER" grep "define('DOL_MINOR_VERSION'" /var/www/html/version.inc.php 2>/dev/null | sed "s/.*'DOL_MINOR_VERSION', '\([^']*\)'.*/\1/" | tr -d '\r\n' || echo "unknown")
+dolibarr_version="24.${dolibarr_version}"
+if [[ "$dolibarr_version" != "24.0.1" ]]; then
+    echo "   ERROR: Unexpected Dolibarr version: $dolibarr_version (expected 24.0.1)" >&2
+    exit 1
+fi
+echo "   Version: $dolibarr_version"
+
+DB_PREFIX=$(docker exec "$WEB_CONTAINER" php -r "
+require '/var/www/html/conf/conf.php';
+echo \$dolibarr_main_db_prefix;
+" 2>/dev/null | tr -d '\r\n')
+if [[ -z "$DB_PREFIX" ]]; then
+    echo "   ERROR: Could not determine Dolibarr database prefix" >&2
+    exit 1
+fi
+echo "   Database prefix: $DB_PREFIX"
+
+company_name=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_INFO_SOCIETE_NOM' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+expected_company="${COMPANY_NAME:-Alxarafe Reference Commercial}"
+if [[ "$company_name" != "$expected_company" ]]; then
+    echo "   ERROR: Company name mismatch: '$company_name' (expected '$expected_company')" >&2
+    exit 1
+fi
+echo "   Company: $company_name"
+
+echo "6/8 Verifying commercial modules..."
+for module in API SOCIETE PROPALE COMMANDE WORKFLOW; do
+    enabled=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='MAIN_MODULE_${module}' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+    if [[ "$enabled" != "1" ]]; then
+        echo "   ERROR: Module $module is not enabled (value: '$enabled')" >&2
+        exit 1
+    fi
+    echo "   Module $module: enabled"
+done
+
+workflow_const=$(docker exec "$DB_CONTAINER" mariadb -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -sN -e "SELECT value FROM ${DB_PREFIX}const WHERE name='WORKFLOW_PROPAL_AUTOCREATE_ORDER' LIMIT 1;" 2>/dev/null | tr -d '\r\n' || echo "")
+echo "   WORKFLOW_PROPAL_AUTOCREATE_ORDER initial value: ${workflow_const:-<not configured>}"
+
+echo "7/8 Verifying admin/workflow.php availability..."
+LOGIN_HTML=$(docker exec "$WEB_CONTAINER" curl -sS -c /tmp/commercial-cookies.txt "http://127.0.0.1:80/index.php" 2>/dev/null)
+LOGIN_TOKEN=$(printf '%s' "$LOGIN_HTML" | grep -o 'name="token" value="[^"]*"' | head -1 | sed 's/.*value="//;s/"$//')
+if [[ -z "$LOGIN_TOKEN" ]]; then
+    echo "   ERROR: Could not obtain login token" >&2
+    exit 1
+fi
+
+docker exec "$WEB_CONTAINER" curl -sS -L -o /dev/null \
+    -c /tmp/commercial-cookies.txt -b /tmp/commercial-cookies.txt \
+    --data-urlencode "token=$LOGIN_TOKEN" \
+    --data-urlencode "actionlogin=login" \
+    --data-urlencode "username=${ADMIN_LOGIN:-admin}" \
+    --data-urlencode "password=${ADMIN_PASSWORD:-admin}" \
+    "http://127.0.0.1:80/index.php" 2>/dev/null
+
+WORKFLOW_HTML=$(docker exec "$WEB_CONTAINER" curl -sS -b /tmp/commercial-cookies.txt "http://127.0.0.1:80/admin/workflow.php" 2>/dev/null)
+if ! printf '%s' "$WORKFLOW_HTML" | grep -q 'WORKFLOW_PROPAL_AUTOCREATE_ORDER'; then
+    echo "   ERROR: WORKFLOW_PROPAL_AUTOCREATE_ORDER not found in admin/workflow.php response" >&2
+    exit 1
+fi
+echo "   WORKFLOW_PROPAL_AUTOCREATE_ORDER present in admin/workflow.php"
+
+echo "8/8 Verifying authenticated REST API access..."
+http_request() {
+    local url="$1"
+    local response
+    response=$(docker exec "$WEB_CONTAINER" curl -sS -w "\n%{http_code}" -H "DOLAPIKEY: ${DOLIBARR_REFERENCE_API_KEY}" -H "Accept: application/json" "$url" 2>/dev/null || echo -e "\n000")
+    HTTP_CODE=$(printf '%s' "$response" | tail -1)
+    HTTP_BODY=$(printf '%s' "$response" | head -n -1)
+}
+
+http_request "http://127.0.0.1:80/api/index.php/users/info"
+if [[ "$HTTP_CODE" != "200" ]]; then
+    echo "   ERROR: Expected HTTP 200 from /users/info, got HTTP $HTTP_CODE" >&2
+    exit 1
+fi
+echo "   Authenticated REST API: HTTP 200"
+echo "   Profile validation complete."

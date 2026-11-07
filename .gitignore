@@ -1,5 +1,6 @@
-# Environment file with real credentials
+# Environment files with real credentials
 .env
+.env.commercial
 
 # Docker volumes (not committed)
 # Named volumes are managed by Docker, not stored in repo

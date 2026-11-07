@@ -10,6 +10,7 @@
 |------------------|---------|-------|---------|
 | CONTACT-REF-001 | baseline-ES | observed | 2026-10-12 |
 | THIRDPARTY-REF-001 | baseline-ES | observed | 2026-10-26 |
+| PROPAL-ORDER-REF-001 | commercial-ES | partial | 2026-11-07 |
 
 ---
 
@@ -19,6 +20,7 @@
 |------------------|--------------|------------------|----------|
 | CONTACT-REF-001 | 12 files traced | 8 mechanisms found | API, DB, UI, Source, Config |
 | THIRDPARTY-REF-001 | 14 files traced | 8 mechanisms found | API, DB, UI(source), Source, Swagger, Config |
+| PROPAL-ORDER-REF-001 | 10 files traced | 6 mechanisms found | API, DB, UI(source), Source, Profile |
 
 ---
 

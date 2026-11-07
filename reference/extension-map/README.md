@@ -19,6 +19,7 @@
 | **Permission Check** | `$user->rights->module->action` | Various | CONTACT-REF-001 |
 | **Configuration (llx_const)** | `$conf->global->CONST_NAME` | `llx_const` table | CONTACT-REF-001 |
 | **Configuration (conf.php)** | `$dolibarr_main_*` | `htdocs/conf/conf.php` | CONTACT-REF-001 |
+| **Workflow trigger** | Automatic object conversion on business events | `core/triggers/interface_20_modWorkflow_WorkflowManager.class.php` | PROPAL-ORDER-REF-001 |
 | **Multicompany/Entity** | `$conf->entity` | `llx_const` entity column | CONTACT-REF-001 |
 | **Language** | `$langs->defaultlang` | `$conf->global->MAIN_LANG_DEFAULT` | CONTACT-REF-001 |
 | **Timezone** | `date_default_timezone_get()` | `PHP_INI_DATE_TIMEZONE` | CONTACT-REF-001 |
@@ -52,3 +53,9 @@
 | THIRDPARTY-REF-001 | Country Condition | `societe/class/societe.class.php:1296` | `country_id == mysoc->country_id` | Mandatory fiscal checks (constant-gated) | Profile ES, no mandatory constants set |
 | THIRDPARTY-REF-001 | Configuration (llx_const) | `llx_const` table | `SOCIETE_*`, `THIRDPARTY_*`, module constants | Fiscal/email/default rules | Only modules/language/currency constants set |
 | THIRDPARTY-REF-001 | Multi-entity | `societe.class.php`, API list | `entity` column / `getEntity('societe')` | Entity scoping | Entity 1 used |
+| PROPAL-ORDER-REF-001 | Workflow trigger | `interface_20_modWorkflow_WorkflowManager.class.php` | `PROPAL_CLOSE_SIGNED` | Creates order when enabled | Yes, after enabling the option |
+| PROPAL-ORDER-REF-001 | Configuration (llx_const) | `llx_const` table | `WORKFLOW_PROPAL_AUTOCREATE_ORDER` | Enables automatic conversion | Yes for runtime test |
+| PROPAL-ORDER-REF-001 | Configuration (llx_const) | `llx_const` table | `ORDER_VALID_AFTER_CLOSE_PROPAL` | Validates the new order immediately | Yes for runtime test |
+| PROPAL-ORDER-REF-001 | Permission check | `comm/propal/card.php` | `commande/creer` | Controls manual "Add order" | Enforced by source |
+| PROPAL-ORDER-REF-001 | Online signature context | `core/ajax/onlineSign.php`, `public/onlinesign/newonlinesign.php` | `closedfromonlinesignature` | Bypasses order permission in the trigger | Source-only |
+| PROPAL-ORDER-REF-001 | Link table | `llx_element_element` | Proposal → order | Supports duplicate guard | Yes |

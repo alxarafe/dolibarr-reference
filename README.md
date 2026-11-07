@@ -47,6 +47,37 @@ The current baseline automatically configures:
 
 The observed database table prefix is currently `llx_`, but Dolibarr table prefixes are configurable and tooling must not assume that value.
 
+### Commercial characterization profile
+
+An isolated `commercial-ES` profile is available for the accepted-proposal to
+customer-order process. It uses a separate Compose project, port, volumes and
+environment file, so it does not alter the `baseline-ES` profile or its captured
+evidence.
+
+Minimum modules:
+
+```text
+Api, Societe, Propale, Commande, Workflow
+```
+
+Start and validate it:
+
+```bash
+cp .env.commercial.example .env.commercial
+./bin/up-commercial
+./bin/check-commercial
+./bin/down-commercial
+```
+
+Default URL:
+
+```text
+http://127.0.0.1:48242
+```
+
+See [docs/commercial-profile.md](docs/commercial-profile.md) for scope,
+isolation guarantees and limitations.
+
 ## Requirements
 
 The host only requires:
@@ -303,11 +334,15 @@ Prefer:
 ├── bin/
 │   ├── capture-technical
 │   ├── check
+│   ├── check-commercial
 │   ├── down
+│   ├── down-commercial
 │   ├── reset
 │   ├── status
-│   └── up
+│   ├── up
+│   └── up-commercial
 ├── docs/
+│   ├── commercial-profile.md
 │   └── reference-environment.md
 ├── reference/
 │   └── baseline/
@@ -317,10 +352,12 @@ Prefer:
 │       └── technical-reference.json
 ├── scripts/
 │   └── docker-init.d/
+├── .env.commercial.example
 ├── .env.example
 ├── AGENTS.md
 ├── LICENSE
 ├── README.md
+├── compose.commercial.yaml
 └── compose.yaml
 ```
 
