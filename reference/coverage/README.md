@@ -20,7 +20,7 @@
 |------------------|--------------|------------------|----------|
 | CONTACT-REF-001 | 12 files traced | 8 mechanisms found | API, DB, UI, Source, Config |
 | THIRDPARTY-REF-001 | 14 files traced | 8 mechanisms found | API, DB, UI(source), Source, Swagger, Config |
-| PROPAL-ORDER-REF-001 | 10 files traced | 6 mechanisms found | API, DB, UI(source), Source, Profile |
+| PROPAL-ORDER-REF-001 | 10 files traced | 6 mechanisms found | API, DB, UI(HTTP), Source, Profile |
 
 ---
 

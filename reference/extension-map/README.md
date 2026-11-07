@@ -55,7 +55,7 @@
 | THIRDPARTY-REF-001 | Multi-entity | `societe.class.php`, API list | `entity` column / `getEntity('societe')` | Entity scoping | Entity 1 used |
 | PROPAL-ORDER-REF-001 | Workflow trigger | `interface_20_modWorkflow_WorkflowManager.class.php` | `PROPAL_CLOSE_SIGNED` | Creates order when enabled | Yes, after enabling the option |
 | PROPAL-ORDER-REF-001 | Configuration (llx_const) | `llx_const` table | `WORKFLOW_PROPAL_AUTOCREATE_ORDER` | Enables automatic conversion | Yes for runtime test |
-| PROPAL-ORDER-REF-001 | Configuration (llx_const) | `llx_const` table | `ORDER_VALID_AFTER_CLOSE_PROPAL` | Validates the new order immediately | Yes for runtime test |
-| PROPAL-ORDER-REF-001 | Permission check | `comm/propal/card.php` | `commande/creer` | Controls manual "Add order" | Enforced by source |
-| PROPAL-ORDER-REF-001 | Online signature context | `core/ajax/onlineSign.php`, `public/onlinesign/newonlinesign.php` | `closedfromonlinesignature` | Bypasses order permission in the trigger | Source-only |
+| PROPAL-ORDER-REF-001 | Configuration (llx_const) | `llx_const` table | `ORDER_VALID_AFTER_CLOSE_PROPAL` | Attempts immediate validation in `createFromProposal`; denial can leave a draft | Admin success and restricted-user denial observed |
+| PROPAL-ORDER-REF-001 | Permission check | `comm/propal/card.php` | `commande/creer` | Controls manual "Add order" | Observed with basic restricted user |
+| PROPAL-ORDER-REF-001 | Online signature context | `core/ajax/onlineSign.php`, `public/onlinesign/newonlinesign.php` | `closedfromonlinesignature` | Assigns the technical user order-creation permission flag; not a creation gate | Source-only; full signature flow untested |
 | PROPAL-ORDER-REF-001 | Link table | `llx_element_element` | Proposal → order | Supports duplicate guard | Yes |

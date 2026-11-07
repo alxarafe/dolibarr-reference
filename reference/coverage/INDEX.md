@@ -6,7 +6,7 @@
 |----|------|---------|-------|---------|-----|----|-------------|----------------|--------------|-------------|----------|---------|
 | CONTACT-REF-001 | Basic contact lifecycle | baseline-ES | observed | API, SOCIETE, USER | ✓ | ✓ | ✓ | ✓ | 12 | 8 | API, DB, UI, Source | 2026-10-12 |
 | THIRDPARTY-REF-001 | Basic third party lifecycle | baseline-ES | observed | API, SOCIETE, USER | ✓ | partial | ✓ | ✓ | 14 | 8 | API, DB, UI(source), Source, Swagger, Config | 2026-10-26 |
-| PROPAL-ORDER-REF-001 | Accepted proposal to customer order | commercial-ES | partial | API, SOCIETE, PROPALE, COMMANDE, WORKFLOW | ✓ | partial | ✓ | ✓ | 10 | 6 | API, DB, UI(source), Source, Profile | 2026-11-07 |
+| PROPAL-ORDER-REF-001 | Accepted proposal to customer order | commercial-ES | partial | API, SOCIETE, PROPALE, COMMANDE, WORKFLOW | ✓ | partial | ✓ | ✓ | 10 | 6 | API, DB, UI(HTTP), Source, Profile | 2026-11-07 |
 
 ---
 

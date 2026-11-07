@@ -17,9 +17,11 @@ if [[ ! -f "$ENV_FILE" ]]; then
         exit 1
     fi
     cp "$ENV_EXAMPLE" "$ENV_FILE"
-    chmod 600 "$ENV_FILE" 2>/dev/null || true
+    chmod 600 "$ENV_FILE"
     echo "Created $ENV_FILE from example."
 fi
+
+chmod 600 "$ENV_FILE"
 
 set -a
 # shellcheck source=/dev/null
@@ -37,7 +39,7 @@ if [[ -z "${DOLIBARR_REFERENCE_API_KEY:-}" ]]; then
     else
         printf '\nDOLIBARR_REFERENCE_API_KEY=%s\n' "$GENERATED_KEY" >> "$ENV_FILE"
     fi
-    chmod 600 "$ENV_FILE" 2>/dev/null || true
+    chmod 600 "$ENV_FILE"
     export DOLIBARR_REFERENCE_API_KEY="$GENERATED_KEY"
 fi
 
@@ -49,13 +51,13 @@ echo "Project: $COMPOSE_PROJECT_NAME"
 echo "Modules: ${ENABLE_MODULES:-Api,Societe,Propale,Commande,Workflow}"
 echo "Starting services..."
 
-docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" up -d
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" up -d
 
 echo "Waiting for database to be healthy..."
 timeout=120
 elapsed=0
 while [[ $elapsed -lt $timeout ]]; do
-    db_status=$(docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q database | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    db_status=$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q database | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
     if [[ "$db_status" == "healthy" ]]; then
         echo "Database is healthy."
         break
@@ -65,7 +67,7 @@ while [[ $elapsed -lt $timeout ]]; do
 done
 if [[ $elapsed -ge $timeout ]]; then
     echo "ERROR: Database did not become healthy within ${timeout}s" >&2
-    docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs database
+    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs database
     exit 1
 fi
 
@@ -73,7 +75,7 @@ echo "Waiting for Dolibarr to be healthy..."
 timeout=240
 elapsed=0
 while [[ $elapsed -lt $timeout ]]; do
-    web_status=$(docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q dolibarr | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    web_status=$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q dolibarr | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
     if [[ "$web_status" == "healthy" ]]; then
         echo "Dolibarr is healthy."
         break
@@ -83,7 +85,7 @@ while [[ $elapsed -lt $timeout ]]; do
 done
 if [[ $elapsed -ge $timeout ]]; then
     echo "ERROR: Dolibarr did not become healthy within ${timeout}s" >&2
-    docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs dolibarr
+    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs dolibarr
     exit 1
 fi
 

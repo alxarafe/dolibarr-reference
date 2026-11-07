@@ -76,7 +76,7 @@ curl -sS -H "DOLAPIKEY: $KEY" -X POST "$BASE/proposals/<proposal-id>/close?statu
 Enable the workflow constants through Dolibarr's own configuration helper:
 
 ```bash
-WEB=$(docker compose -f compose.commercial.yaml -p dolibarr-reference-commercial ps -q dolibarr)
+WEB=$(docker compose --env-file .env.commercial -f compose.commercial.yaml -p dolibarr-reference-commercial ps -q dolibarr)
 docker exec "$WEB" php -r 'require "/var/www/html/master.inc.php"; require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php"; dolibarr_set_const($db,"WORKFLOW_PROPAL_AUTOCREATE_ORDER","1","chaine",0,"",$conf->entity);'
 docker exec "$WEB" php -r 'require "/var/www/html/master.inc.php"; require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php"; dolibarr_set_const($db,"ORDER_VALID_AFTER_CLOSE_PROPAL","1","chaine",0,"",$conf->entity);'
 ```
@@ -232,7 +232,10 @@ Not exercised at runtime in this characterization. Source trace shows:
 - the order card creates the header first and then copies only the selected
   proposal lines;
 - the order is created as a draft;
-- `ORDER_VALID_AFTER_CLOSE_PROPAL` can validate it immediately.
+- Correction after independent source audit: the UI creation action does not
+  consult `ORDER_VALID_AFTER_CLOSE_PROPAL`. That option applies to
+  `Commande::createFromProposal` (automatic/API conversion). UI validation is a
+  separate user action subject to validation permission.
 
 This path remains `INFERIDO` at runtime and must be verified separately.
 
@@ -292,3 +295,14 @@ Characterized: automatic creation, duplicate guard, immediate validation,
 workflow option availability/disablement and line value fidelity. Pending:
 manual UI line selection, online signature, non-admin permissions, discounts,
 multi-currency and transaction rollback behavior.
+
+
+## Independent correction follow-up
+
+The observations above are the initial characterization record. The independent
+audit discarded the inferred order-creation permission gate in automatic
+workflow conversion and corrected the manual-validation interpretation. See
+[the audit follow-up](PROPAL-ORDER-REF-001-audit-follow-up.md) for the reproducible
+HTTP UI fixtures, basic non-admin permission observations, empty selection versus
+cancel, validation outcomes and remaining limits. Initial source-only labels
+above are historical; the follow-up contains the newer runtime evidence.
