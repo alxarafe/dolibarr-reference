@@ -69,3 +69,13 @@ When recording a source trace in a characterization:
 | `htdocs/core/class/commonobject.class.php` | THIRDPARTY-REF-001 | `statut`, `isObjectUsed`, `deleteByParentField` |
 | `htdocs/core/class/api.class.php` | THIRDPARTY-REF-001 | `_cleanObjectDatas` response serialization |
 | `htdocs/langs/es_ES/companies.lang` | THIRDPARTY-REF-001 | Spanish fiscal identifier labels |
+| `htdocs/comm/propal/class/propal.class.php` | PROPAL-ORDER-REF-001 | Proposal statuses, close-as-accepted and `PROPAL_CLOSE_SIGNED` |
+| `htdocs/comm/propal/card.php` | PROPAL-ORDER-REF-001 | Manual "Add order" action and permission gate |
+| `htdocs/commande/card.php` | PROPAL-ORDER-REF-001 | Manual order creation and selected-line copy |
+| `htdocs/commande/class/commande.class.php` | PROPAL-ORDER-REF-001 | `createFromProposal`, line copy, immediate validation, order statuses |
+| `htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php` | PROPAL-ORDER-REF-001 | Automatic conversion, online-signature context and duplicate guard |
+| `htdocs/core/modules/modWorkflow.class.php` | PROPAL-ORDER-REF-001 | Commented constant initialisation; misleading hidden-option conclusion |
+| `htdocs/admin/workflow.php` | PROPAL-ORDER-REF-001 | Defines and renders `WORKFLOW_PROPAL_AUTOCREATE_ORDER` |
+| `htdocs/comm/propal/class/api_proposals.class.php` | PROPAL-ORDER-REF-001 | Proposal close API used by the controlled fixture |
+| `htdocs/commande/class/api_orders.class.php` | PROPAL-ORDER-REF-001 | `createfromproposal` API used to set up the duplicate guard |
+| `htdocs/core/ajax/onlineSign.php`, `htdocs/public/onlinesign/newonlinesign.php` | PROPAL-ORDER-REF-001 | Online-signature context; source-only evidence |

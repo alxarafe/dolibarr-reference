@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+# bin/up-commercial - Start the isolated Dolibarr commercial reference profile
+# Strict shell policy
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+COMPOSE_FILE="$PROJECT_ROOT/compose.commercial.yaml"
+ENV_FILE="$PROJECT_ROOT/.env.commercial"
+ENV_EXAMPLE="$PROJECT_ROOT/.env.commercial.example"
+COMPOSE_PROJECT_NAME="dolibarr-reference-commercial"
+DOLIBARR_IMAGE="${DOLIBARR_IMAGE:-dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce}"
+
+if [[ ! -f "$ENV_FILE" ]]; then
+    if [[ ! -f "$ENV_EXAMPLE" ]]; then
+        echo "ERROR: $ENV_EXAMPLE not found" >&2
+        exit 1
+    fi
+    cp "$ENV_EXAMPLE" "$ENV_FILE"
+    chmod 600 "$ENV_FILE"
+    echo "Created $ENV_FILE from example."
+fi
+
+chmod 600 "$ENV_FILE"
+
+set -a
+# shellcheck source=/dev/null
+source "$ENV_FILE"
+set +a
+
+if [[ -z "${DOLIBARR_REFERENCE_API_KEY:-}" ]]; then
+    GENERATED_KEY=$(docker run --rm --entrypoint php "$DOLIBARR_IMAGE" -r 'echo bin2hex(random_bytes(32));' 2>/dev/null)
+    if [[ -z "$GENERATED_KEY" ]]; then
+        echo "ERROR: Failed to generate API key using Docker" >&2
+        exit 1
+    fi
+    if grep -q "^DOLIBARR_REFERENCE_API_KEY=" "$ENV_FILE"; then
+        sed -i "s/^DOLIBARR_REFERENCE_API_KEY=.*/DOLIBARR_REFERENCE_API_KEY=$GENERATED_KEY/" "$ENV_FILE"
+    else
+        printf '\nDOLIBARR_REFERENCE_API_KEY=%s\n' "$GENERATED_KEY" >> "$ENV_FILE"
+    fi
+    chmod 600 "$ENV_FILE"
+    export DOLIBARR_REFERENCE_API_KEY="$GENERATED_KEY"
+fi
+
+export COMPOSE_PROJECT_NAME
+export DOLIBARR_REFERENCE_PORT="${DOLIBARR_REFERENCE_PORT:-48242}"
+
+echo "=== Dolibarr Commercial Reference Profile ==="
+echo "Project: $COMPOSE_PROJECT_NAME"
+echo "Modules: ${ENABLE_MODULES:-Api,Societe,Propale,Commande,Workflow}"
+echo "Starting services..."
+
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" up -d
+
+echo "Waiting for database to be healthy..."
+timeout=120
+elapsed=0
+while [[ $elapsed -lt $timeout ]]; do
+    db_status=$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q database | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    if [[ "$db_status" == "healthy" ]]; then
+        echo "Database is healthy."
+        break
+    fi
+    sleep 2
+    elapsed=$((elapsed + 2))
+done
+if [[ $elapsed -ge $timeout ]]; then
+    echo "ERROR: Database did not become healthy within ${timeout}s" >&2
+    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs database
+    exit 1
+fi
+
+echo "Waiting for Dolibarr to be healthy..."
+timeout=240
+elapsed=0
+while [[ $elapsed -lt $timeout ]]; do
+    web_status=$(docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" ps -q dolibarr | xargs docker inspect --format '{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+    if [[ "$web_status" == "healthy" ]]; then
+        echo "Dolibarr is healthy."
+        break
+    fi
+    sleep 3
+    elapsed=$((elapsed + 3))
+done
+if [[ $elapsed -ge $timeout ]]; then
+    echo "ERROR: Dolibarr did not become healthy within ${timeout}s" >&2
+    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" logs dolibarr
+    exit 1
+fi
+
+echo ""
+echo "=== Dolibarr Commercial Reference Profile Ready ==="
+echo "URL: http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}"
+echo "API Explorer: http://127.0.0.1:${DOLIBARR_REFERENCE_PORT}/api/index.php"
+echo "Login: ${ADMIN_LOGIN:-admin}"
+echo "Password: (see $ENV_FILE)"
+if [[ -n "${DOLIBARR_REFERENCE_API_KEY:-}" ]]; then
+    masked_key="${DOLIBARR_REFERENCE_API_KEY:0:8}****${DOLIBARR_REFERENCE_API_KEY: -4}"
+    echo "DOLAPIKEY: ${masked_key}"
+fi
+echo ""
+echo "Stop with: ./bin/down-commercial"
