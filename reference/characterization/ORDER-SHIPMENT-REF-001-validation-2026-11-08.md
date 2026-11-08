@@ -136,15 +136,22 @@ validation was repeated for documentation-only reconciliation. No new functional
 conclusion or Alixar contract decision is introduced. Historical reports and
 captures remain preserved. Local closure does not authorize publication.
 
-### Lossless log preservation and readable formatting
+### Log formatting and currently available evidence
 
 Final staged whitespace checks identified trailing spaces emitted by Docker
-Compose progress lines in the two retained logs. The original retained bytes
-are preserved losslessly as
-[shipping log archive](ORDER-SHIPMENT-REF-001-shipping-2026-11-08.log.gz) and
-[baseline log archive](ORDER-SHIPMENT-REF-001-baseline-check-2026-11-08.log.gz).
-Decompression was verified byte-for-byte before preparing the readable copies.
-The baseline archive preserves the already-redacted key line described above.
+Compose progress lines in the two retained logs. At the original closure,
+compressed copies of the original retained bytes were added and decompression
+was verified byte-for-byte before preparing the readable copies. A subsequent
+cleanup removes those duplicate compressed files from the current tree.
+They remain retrievable from the
+[original closure commit](https://github.com/alxarafe/dolibarr-reference/commit/de8ddf595e911df2f15a66625c611636ed402eb0);
+Git history has not been rewritten.
+
+The current tree retains the linked readable shipping and baseline `.log` files,
+both JSON captures (28 current observations and 21 historical observations),
+the source SHA-256 manifest, fixtures, evidence extractor and functional
+characterization. These files are unchanged by the duplicate-file cleanup.
+The baseline log retains the already-redacted key line described above.
 
 Only trailing whitespace on `Container`, `Network` and `Volume` progress lines
 was removed in the readable `.log` copies (40 shipping and 23 baseline lines).
@@ -153,7 +160,10 @@ JSON captures remain unchanged. Compose progress formatting is infrastructure
 presentation, not Dolibarr behavior or a reference contract value. Whitespace
 checks and functional expectations were not weakened.
 
-| Retained original log | SHA-256 of decompressed original |
+The following historical hashes identify the original output retained in Git
+history, not the readable `.log` files or separate files in the current tree.
+
+| Historical original output | SHA-256 before readable formatting |
 |---|---|
 | Shipping | `846f220f6460ed9b0a4808ad9959c497060b3e295d1d55e1ec7f9219b5efb1ec` |
 | Baseline | `ffba6208b6a7ba05386e2af2bb8882ecfa2e85ca04a6c17c91c8ac3f68ab5316` |
