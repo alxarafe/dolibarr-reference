@@ -93,3 +93,16 @@ against the installed image and the
 [2026-11-08 capture](../characterization/ORDER-SHIPMENT-REF-001-observed-2026-11-08.json)
 retains both hashes. The characterization supplies exact upstream line links;
 matching hashes do not promote source-only UI/events to runtime evidence.
+
+## INVOICE-ROUTES-REF-001
+
+The [invoice route characterization](../characterization/INVOICE-ROUTES-REF-001-invoicing-routes.md#source-trace-and-configuration)
+traces order/shipment UI entries, invoice form processing, order conversion and
+generic API creation, invoice business classes, stock operations and inactive
+workflow candidates at the pinned 24.0.1 commit. The
+[manifest](../characterization/INVOICE-ROUTES-REF-001-source-hashes.json) and
+[capture](../characterization/INVOICE-ROUTES-REF-001-observed.json) retain ten
+expected/installed hash comparisons. Form/API/class observations are separated
+from source-only guards and trigger dispatch. The nonexistent invoice-line
+origin column assumed by the first harness version was corrected against the
+exact schema; no production schema was changed.

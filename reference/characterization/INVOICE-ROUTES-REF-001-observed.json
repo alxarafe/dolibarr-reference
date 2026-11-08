@@ -1,0 +1,3560 @@
+{
+    "captured_at_utc": "2026-11-08T08:23:14Z",
+    "command": "./bin/check-invoicing",
+    "project": "dolibarr-reference-invoicing-check-146749-21606",
+    "metadata": {
+        "fixture_sha256": "7dd2d3e8a9c75241b2b409b2d03404654e67de5c825ecf1a09e285f51dd12748",
+        "runner_sha256": "9bc24c1e64aceaaa2d9d6eb82bbd1a3a6f12002b8cb00082287eaade32f75c3e"
+    },
+    "source_checks": [
+        {
+            "path": "commande/card.php",
+            "expected_sha256": "79290a33f51d84e981321c702da9104662967c488ef71e120fbf2cf2d294b603",
+            "image_sha256": "79290a33f51d84e981321c702da9104662967c488ef71e120fbf2cf2d294b603",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "commande/class/commande.class.php",
+            "expected_sha256": "ac6f2d09636b42a816028a2ea10aa31742f687c77bb17c98d61329ffcff7fef0",
+            "image_sha256": "ac6f2d09636b42a816028a2ea10aa31742f687c77bb17c98d61329ffcff7fef0",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "compta/facture/card.php",
+            "expected_sha256": "13ed0fc8c1a5ef6253e51cffd59d85f6f528353365ebfea72d356176ffdb82f4",
+            "image_sha256": "13ed0fc8c1a5ef6253e51cffd59d85f6f528353365ebfea72d356176ffdb82f4",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "compta/facture/class/api_invoices.class.php",
+            "expected_sha256": "02fd345aec219a21e58b4b5c67319d08f346a862d58ab5d3561fbf27625398fc",
+            "image_sha256": "02fd345aec219a21e58b4b5c67319d08f346a862d58ab5d3561fbf27625398fc",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "compta/facture/class/facture.class.php",
+            "expected_sha256": "2b32649a83fb064aa9030634f5423460a992c3b303a4d729f160e50d1cf87203",
+            "image_sha256": "2b32649a83fb064aa9030634f5423460a992c3b303a4d729f160e50d1cf87203",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "core/modules/modFacture.class.php",
+            "expected_sha256": "111387a69f86a7f5ef0d975403764b8ae8d7fe322c173e07eb099dfaf0988714",
+            "image_sha256": "111387a69f86a7f5ef0d975403764b8ae8d7fe322c173e07eb099dfaf0988714",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "core/triggers/interface_20_modWorkflow_WorkflowManager.class.php",
+            "expected_sha256": "a4dfa1760680e8eb3fa031c261e9c47e1738ef6bd0e3af9a03b6e46b754cfa01",
+            "image_sha256": "a4dfa1760680e8eb3fa031c261e9c47e1738ef6bd0e3af9a03b6e46b754cfa01",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "expedition/card.php",
+            "expected_sha256": "90f8ad7a7dde97fb435767fc3366d93ec68139cf73e07edd826947e69bf6e543",
+            "image_sha256": "90f8ad7a7dde97fb435767fc3366d93ec68139cf73e07edd826947e69bf6e543",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "expedition/class/expedition.class.php",
+            "expected_sha256": "4ae78e9fc787da560d3946a460762f38ac1029808cbd05e1f793a4b90cc2e1ea",
+            "image_sha256": "4ae78e9fc787da560d3946a460762f38ac1029808cbd05e1f793a4b90cc2e1ea",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        },
+        {
+            "path": "product/stock/class/mouvementstock.class.php",
+            "expected_sha256": "589e70752300d487aadd4e65b7d8aa5b63cef25149816e7da5e2415e8bc508f1",
+            "image_sha256": "589e70752300d487aadd4e65b7d8aa5b63cef25149816e7da5e2415e8bc508f1",
+            "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25"
+        }
+    ],
+    "evidence": {
+        "assertions": [
+            "pinned Dolibarr version",
+            "enabled api",
+            "enabled societe",
+            "enabled propal",
+            "enabled commande",
+            "enabled expedition",
+            "enabled product",
+            "enabled stock",
+            "enabled invoice",
+            "automatic workflow disabled for manual routes",
+            "load administrator",
+            "configure MAIN_USE_ADVANCED_PERMS=0",
+            "configure WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER=0",
+            "configure WORKFLOW_BILL_ON_SHIPMENT=1",
+            "configure STOCK_SUPPORTS_SERVICES=0",
+            "configure STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT=1",
+            "configure STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS=0",
+            "UI session login",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=0",
+            "create isolated warehouse ui-order",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create upstream proposal fixture",
+            "proposal product line",
+            "proposal product line",
+            "validate upstream proposal",
+            "accept upstream proposal without workflow",
+            "reuse proposal-to-order setup",
+            "validate source order",
+            "authenticated origin card",
+            "UI emits expected invoice origin",
+            "UI invoice creation form",
+            "UI creates exactly one draft invoice",
+            "fetch observed invoice",
+            "fetch observed invoice",
+            "UI full order quantities",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "disabled timing leaves stock unchanged",
+            "authenticated origin card",
+            "UI emits expected invoice origin",
+            "UI invoice creation form",
+            "UI creates exactly one draft invoice",
+            "fetch observed invoice",
+            "fetch observed invoice",
+            "UI repeat copies original quantities rather than net remainder",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "UI permits repeated full quantities in tested composition",
+            "create isolated warehouse ui-partial",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "authenticated origin card",
+            "UI emits expected invoice origin",
+            "UI invoice creation form",
+            "UI creates exactly one draft invoice",
+            "fetch observed invoice",
+            "fetch observed invoice",
+            "UI percentage scales quantities",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "authenticated origin card",
+            "UI emits expected invoice origin",
+            "UI invoice creation form",
+            "UI creates exactly one draft invoice",
+            "fetch observed invoice",
+            "fetch observed invoice",
+            "UI selection copies one full source line",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "create isolated warehouse api-order",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "API order conversion succeeds",
+            "fetch observed invoice",
+            "fetch observed invoice",
+            "API copies full order",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "API order conversion succeeds",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "explicitly classify source order billed",
+            "API refuses explicitly billed order",
+            "refresh source order",
+            "fetch observed invoice",
+            "create isolated warehouse class-order",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "direct class order conversion",
+            "fetch observed invoice",
+            "direct class full quantities",
+            "refresh source order",
+            "fetch observed invoice",
+            "direct class validation",
+            "refresh source order",
+            "fetch observed invoice",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=1",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=0",
+            "create isolated warehouse ui-shipment",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "prepare partial shipment fixture",
+            "prepare partial shipment fixture",
+            "create and validate partial shipment fixture",
+            "refresh source order",
+            "authenticated origin card",
+            "UI emits expected invoice origin",
+            "UI invoice creation form",
+            "UI creates exactly one draft invoice",
+            "fetch observed invoice",
+            "fetch observed invoice",
+            "shipment UI copies shipment quantities",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "invoice adds no movement with shipment-only timing",
+            "authenticated origin card",
+            "UI emits expected invoice origin",
+            "UI invoice creation form",
+            "UI creates exactly one draft invoice",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=0",
+            "create isolated warehouse generic-api",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "generic API creates caller-supplied linked invoice",
+            "fetch observed invoice",
+            "fetch observed invoice",
+            "generic API does not auto-copy order lines",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=1",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=0",
+            "create isolated warehouse stock-order",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "API order conversion succeeds",
+            "fetch observed invoice",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "single stock timing produces one decrease order",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=1",
+            "create isolated warehouse stock-invoice",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "API order conversion succeeds",
+            "fetch observed invoice",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "single stock timing produces one decrease invoice",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=1",
+            "create isolated warehouse invoice-no-warehouse",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "API order conversion succeeds",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "invoice timing with zero warehouse has no movement",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=1",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=1",
+            "create isolated warehouse combined",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "prepare partial shipment fixture",
+            "prepare partial shipment fixture",
+            "create and validate partial shipment fixture",
+            "authenticated origin card",
+            "UI emits expected invoice origin",
+            "UI invoice creation form",
+            "UI creates exactly one draft invoice",
+            "fetch observed invoice",
+            "refresh source order",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "shipment and invoice timing each decrement same shipped quantities",
+            "configure STOCK_CALCULATE_ON_VALIDATE_ORDER=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT=0",
+            "configure STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0",
+            "configure STOCK_CALCULATE_ON_BILL=0",
+            "create isolated warehouse permissions",
+            "create stockable product",
+            "opening receipt",
+            "create stockable product",
+            "opening receipt",
+            "create isolated customer",
+            "create order",
+            "order product line",
+            "order product line",
+            "validate source order",
+            "API order conversion succeeds",
+            "fetch observed invoice",
+            "restricted invoice reader",
+            "grant basic read/customer visibility",
+            "grant basic read/customer visibility",
+            "grant basic read/customer visibility",
+            "grant basic read/customer visibility",
+            "provision ephemeral reader key",
+            "reader GET succeeds",
+            "reader denied /invoices",
+            "reader denied /invoices/createfromorder/11",
+            "reader denied /invoices/15/validate",
+            "class denies invoice validation without creation permission",
+            "refresh source order",
+            "fetch observed invoice",
+            "grant basic invoice creation",
+            "API order conversion succeeds",
+            "fetch observed invoice",
+            "API invoice validation succeeds",
+            "refresh source order",
+            "fetch observed invoice",
+            "revalidation API reports nothing done"
+        ],
+        "http": [
+            {
+                "method": "POST",
+                "path": "/compta/facture/card.php",
+                "origin": "commande",
+                "status": 302,
+                "percent": 100,
+                "selected_line_ids": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/1/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/compta/facture/card.php",
+                "origin": "commande",
+                "status": 302,
+                "percent": 100,
+                "selected_line_ids": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/2/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/compta/facture/card.php",
+                "origin": "commande",
+                "status": 302,
+                "percent": 50,
+                "selected_line_ids": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/3/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/compta/facture/card.php",
+                "origin": "commande",
+                "status": 302,
+                "percent": 100,
+                "selected_line_ids": [
+                    3
+                ]
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/4/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/3",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/5/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/3",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/6/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/3",
+                "status": 405
+            },
+            {
+                "method": "POST",
+                "path": "/compta/facture/card.php",
+                "origin": "shipping",
+                "status": 302,
+                "percent": 100,
+                "selected_line_ids": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/8/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/compta/facture/card.php",
+                "origin": "shipping",
+                "status": 302,
+                "percent": 100,
+                "selected_line_ids": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/9/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/10/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/7",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/11/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/8",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/12/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/9",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/13/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/compta/facture/card.php",
+                "origin": "shipping",
+                "status": 302,
+                "percent": 100,
+                "selected_line_ids": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/14/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/11",
+                "status": 200
+            },
+            {
+                "method": "GET",
+                "path": "/invoices/15",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices",
+                "status": 403
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/11",
+                "status": 403
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/15/validate",
+                "status": 403
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/createfromorder/11",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/16/validate",
+                "status": 200
+            },
+            {
+                "method": "POST",
+                "path": "/invoices/16/validate",
+                "status": 304
+            }
+        ],
+        "observations": [
+            {
+                "scenario": "INV-ROUTE-001",
+                "stage": "full_draft",
+                "order_id": 1,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": 1,
+                "order_line_ids": [
+                    1,
+                    2
+                ],
+                "product_ids": [
+                    1,
+                    2
+                ],
+                "warehouse_id": 1,
+                "linked_invoices": [
+                    {
+                        "rowid": "1",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 1,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "1",
+                            "fk_product": "1",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "2",
+                            "fk_product": "2",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "propal",
+                        "fk_target": "1",
+                        "targettype": "commande"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "commande",
+                        "fk_target": "1",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "1",
+                        "fk_product": "1",
+                        "fk_entrepot": "1",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "2",
+                        "fk_product": "2",
+                        "fk_entrepot": "1",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-001",
+                "stage": "full_validated",
+                "order_id": 1,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": 1,
+                "order_line_ids": [
+                    1,
+                    2
+                ],
+                "product_ids": [
+                    1,
+                    2
+                ],
+                "warehouse_id": 1,
+                "linked_invoices": [
+                    {
+                        "rowid": "1",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 1,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "1",
+                            "fk_product": "1",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "2",
+                            "fk_product": "2",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        5,
+                        3
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    0,
+                    0
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "propal",
+                        "fk_target": "1",
+                        "targettype": "commande"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "commande",
+                        "fk_target": "1",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "1",
+                        "fk_product": "1",
+                        "fk_entrepot": "1",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "2",
+                        "fk_product": "2",
+                        "fk_entrepot": "1",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-001",
+                "stage": "repeat_validated",
+                "order_id": 1,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": 1,
+                "order_line_ids": [
+                    1,
+                    2
+                ],
+                "product_ids": [
+                    1,
+                    2
+                ],
+                "warehouse_id": 1,
+                "linked_invoices": [
+                    {
+                        "rowid": "1",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    },
+                    {
+                        "rowid": "2",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 2,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "3",
+                            "fk_product": "1",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "4",
+                            "fk_product": "2",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        10,
+                        6
+                    ],
+                    "validated": [
+                        10,
+                        6
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    -5,
+                    -3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "propal",
+                        "fk_target": "1",
+                        "targettype": "commande"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "commande",
+                        "fk_target": "1",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "commande",
+                        "fk_target": "2",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "1",
+                        "fk_product": "1",
+                        "fk_entrepot": "1",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "2",
+                        "fk_product": "2",
+                        "fk_entrepot": "1",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-001-P",
+                "stage": "partial_draft",
+                "order_id": 2,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    3,
+                    4
+                ],
+                "product_ids": [
+                    3,
+                    4
+                ],
+                "warehouse_id": 2,
+                "linked_invoices": [
+                    {
+                        "rowid": "3",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "40.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 3,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "5",
+                            "fk_product": "3",
+                            "qty": "2.5",
+                            "fk_parent_line": null,
+                            "total_ht": "25.00000000"
+                        },
+                        {
+                            "rowid": "6",
+                            "fk_product": "4",
+                            "qty": "1.5",
+                            "fk_parent_line": null,
+                            "total_ht": "15.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        2.5,
+                        1.5
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "2",
+                        "sourcetype": "commande",
+                        "fk_target": "3",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "3",
+                        "fk_product": "3",
+                        "fk_entrepot": "2",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "4",
+                        "fk_product": "4",
+                        "fk_entrepot": "2",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-001-P",
+                "stage": "partial_validated",
+                "order_id": 2,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    3,
+                    4
+                ],
+                "product_ids": [
+                    3,
+                    4
+                ],
+                "warehouse_id": 2,
+                "linked_invoices": [
+                    {
+                        "rowid": "3",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "40.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 3,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "5",
+                            "fk_product": "3",
+                            "qty": "2.5",
+                            "fk_parent_line": null,
+                            "total_ht": "25.00000000"
+                        },
+                        {
+                            "rowid": "6",
+                            "fk_product": "4",
+                            "qty": "1.5",
+                            "fk_parent_line": null,
+                            "total_ht": "15.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        2.5,
+                        1.5
+                    ],
+                    "validated": [
+                        2.5,
+                        1.5
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    2.5,
+                    1.5
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "2",
+                        "sourcetype": "commande",
+                        "fk_target": "3",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "3",
+                        "fk_product": "3",
+                        "fk_entrepot": "2",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "4",
+                        "fk_product": "4",
+                        "fk_entrepot": "2",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-001-P",
+                "stage": "selected_line_validated",
+                "order_id": 2,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    3,
+                    4
+                ],
+                "product_ids": [
+                    3,
+                    4
+                ],
+                "warehouse_id": 2,
+                "linked_invoices": [
+                    {
+                        "rowid": "3",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "40.00000000"
+                    },
+                    {
+                        "rowid": "4",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "50.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 4,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "7",
+                            "fk_product": "3",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        7.5,
+                        1.5
+                    ],
+                    "validated": [
+                        7.5,
+                        1.5
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    -2.5,
+                    1.5
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "2",
+                        "sourcetype": "commande",
+                        "fk_target": "3",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "2",
+                        "sourcetype": "commande",
+                        "fk_target": "4",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "3",
+                        "fk_product": "3",
+                        "fk_entrepot": "2",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "4",
+                        "fk_product": "4",
+                        "fk_entrepot": "2",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-002",
+                "stage": "draft",
+                "order_id": 3,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    5,
+                    6
+                ],
+                "product_ids": [
+                    5,
+                    6
+                ],
+                "warehouse_id": 3,
+                "linked_invoices": [
+                    {
+                        "rowid": "5",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 5,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "8",
+                            "fk_product": "5",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "9",
+                            "fk_product": "6",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "3",
+                        "sourcetype": "commande",
+                        "fk_target": "5",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "5",
+                        "fk_product": "5",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "6",
+                        "fk_product": "6",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-002",
+                "stage": "validated",
+                "order_id": 3,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    5,
+                    6
+                ],
+                "product_ids": [
+                    5,
+                    6
+                ],
+                "warehouse_id": 3,
+                "linked_invoices": [
+                    {
+                        "rowid": "5",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 5,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "8",
+                            "fk_product": "5",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "9",
+                            "fk_product": "6",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        5,
+                        3
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    0,
+                    0
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "3",
+                        "sourcetype": "commande",
+                        "fk_target": "5",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "5",
+                        "fk_product": "5",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "6",
+                        "fk_product": "6",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-002",
+                "stage": "repeat_validated",
+                "order_id": 3,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    5,
+                    6
+                ],
+                "product_ids": [
+                    5,
+                    6
+                ],
+                "warehouse_id": 3,
+                "linked_invoices": [
+                    {
+                        "rowid": "5",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    },
+                    {
+                        "rowid": "6",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 6,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "10",
+                            "fk_product": "5",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "11",
+                            "fk_product": "6",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        10,
+                        6
+                    ],
+                    "validated": [
+                        10,
+                        6
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    -5,
+                    -3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "3",
+                        "sourcetype": "commande",
+                        "fk_target": "5",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "3",
+                        "sourcetype": "commande",
+                        "fk_target": "6",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "5",
+                        "fk_product": "5",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "6",
+                        "fk_product": "6",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-002",
+                "stage": "explicitly_billed",
+                "order_id": 3,
+                "order_status": 1,
+                "order_billed": 1,
+                "proposal_id": null,
+                "order_line_ids": [
+                    5,
+                    6
+                ],
+                "product_ids": [
+                    5,
+                    6
+                ],
+                "warehouse_id": 3,
+                "linked_invoices": [
+                    {
+                        "rowid": "5",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    },
+                    {
+                        "rowid": "6",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 6,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "10",
+                            "fk_product": "5",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "11",
+                            "fk_product": "6",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        10,
+                        6
+                    ],
+                    "validated": [
+                        10,
+                        6
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    -5,
+                    -3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "3",
+                        "sourcetype": "commande",
+                        "fk_target": "5",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "3",
+                        "sourcetype": "commande",
+                        "fk_target": "6",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "5",
+                        "fk_product": "5",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "6",
+                        "fk_product": "6",
+                        "fk_entrepot": "3",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-003",
+                "stage": "draft",
+                "order_id": 4,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    7,
+                    8
+                ],
+                "product_ids": [
+                    7,
+                    8
+                ],
+                "warehouse_id": 4,
+                "linked_invoices": [
+                    {
+                        "rowid": "7",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 7,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "12",
+                            "fk_product": "7",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "13",
+                            "fk_product": "8",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "4",
+                        "sourcetype": "commande",
+                        "fk_target": "7",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "7",
+                        "fk_product": "7",
+                        "fk_entrepot": "4",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "8",
+                        "fk_product": "8",
+                        "fk_entrepot": "4",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-003",
+                "stage": "validated",
+                "order_id": 4,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    7,
+                    8
+                ],
+                "product_ids": [
+                    7,
+                    8
+                ],
+                "warehouse_id": 4,
+                "linked_invoices": [
+                    {
+                        "rowid": "7",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 7,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "12",
+                            "fk_product": "7",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "13",
+                            "fk_product": "8",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        5,
+                        3
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    0,
+                    0
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "4",
+                        "sourcetype": "commande",
+                        "fk_target": "7",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "7",
+                        "fk_product": "7",
+                        "fk_entrepot": "4",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "8",
+                        "fk_product": "8",
+                        "fk_entrepot": "4",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-004",
+                "stage": "shipment_validated",
+                "order_id": 5,
+                "order_status": 2,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    9,
+                    10
+                ],
+                "product_ids": [
+                    9,
+                    10
+                ],
+                "warehouse_id": 5,
+                "linked_invoices": [],
+                "invoice": null,
+                "invoiced_quantities": {
+                    "all": [
+                        0,
+                        0
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": 1,
+                "shipment_status": 1,
+                "shipment_billed": 0,
+                "links": [
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "1",
+                        "targettype": "shipping"
+                    }
+                ],
+                "stock": [
+                    8,
+                    9
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "9",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "10",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "11",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "-2",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    },
+                    {
+                        "rowid": "12",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "-1",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-004",
+                "stage": "draft",
+                "order_id": 5,
+                "order_status": 2,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    9,
+                    10
+                ],
+                "product_ids": [
+                    9,
+                    10
+                ],
+                "warehouse_id": 5,
+                "linked_invoices": [
+                    {
+                        "rowid": "8",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "30.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 8,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "14",
+                            "fk_product": "9",
+                            "qty": "2",
+                            "fk_parent_line": null,
+                            "total_ht": "20.00000000"
+                        },
+                        {
+                            "rowid": "15",
+                            "fk_product": "10",
+                            "qty": "1",
+                            "fk_parent_line": null,
+                            "total_ht": "10.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        2,
+                        1
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": 1,
+                "shipment_status": 1,
+                "shipment_billed": 0,
+                "links": [
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "1",
+                        "targettype": "shipping"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "shipping",
+                        "fk_target": "8",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "8",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    8,
+                    9
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "9",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "10",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "11",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "-2",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    },
+                    {
+                        "rowid": "12",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "-1",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-004",
+                "stage": "validated",
+                "order_id": 5,
+                "order_status": 2,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    9,
+                    10
+                ],
+                "product_ids": [
+                    9,
+                    10
+                ],
+                "warehouse_id": 5,
+                "linked_invoices": [
+                    {
+                        "rowid": "8",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "30.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 8,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "14",
+                            "fk_product": "9",
+                            "qty": "2",
+                            "fk_parent_line": null,
+                            "total_ht": "20.00000000"
+                        },
+                        {
+                            "rowid": "15",
+                            "fk_product": "10",
+                            "qty": "1",
+                            "fk_parent_line": null,
+                            "total_ht": "10.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        2,
+                        1
+                    ],
+                    "validated": [
+                        2,
+                        1
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    3,
+                    2
+                ],
+                "shipment_id": 1,
+                "shipment_status": 1,
+                "shipment_billed": 0,
+                "links": [
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "1",
+                        "targettype": "shipping"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "shipping",
+                        "fk_target": "8",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "8",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    8,
+                    9
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "9",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "10",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "11",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "-2",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    },
+                    {
+                        "rowid": "12",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "-1",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-004",
+                "stage": "repeat_validated",
+                "order_id": 5,
+                "order_status": 2,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    9,
+                    10
+                ],
+                "product_ids": [
+                    9,
+                    10
+                ],
+                "warehouse_id": 5,
+                "linked_invoices": [
+                    {
+                        "rowid": "8",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "30.00000000"
+                    },
+                    {
+                        "rowid": "9",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "30.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 9,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "16",
+                            "fk_product": "9",
+                            "qty": "2",
+                            "fk_parent_line": null,
+                            "total_ht": "20.00000000"
+                        },
+                        {
+                            "rowid": "17",
+                            "fk_product": "10",
+                            "qty": "1",
+                            "fk_parent_line": null,
+                            "total_ht": "10.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        4,
+                        2
+                    ],
+                    "validated": [
+                        4,
+                        2
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    1,
+                    1
+                ],
+                "shipment_id": 1,
+                "shipment_status": 1,
+                "shipment_billed": 0,
+                "links": [
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "1",
+                        "targettype": "shipping"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "shipping",
+                        "fk_target": "8",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "8",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "1",
+                        "sourcetype": "shipping",
+                        "fk_target": "9",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "5",
+                        "sourcetype": "commande",
+                        "fk_target": "9",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    8,
+                    9
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "9",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "10",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "11",
+                        "fk_product": "9",
+                        "fk_entrepot": "5",
+                        "value": "-2",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    },
+                    {
+                        "rowid": "12",
+                        "fk_product": "10",
+                        "fk_entrepot": "5",
+                        "value": "-1",
+                        "type_mouvement": "2",
+                        "fk_origin": "1",
+                        "origintype": "shipping"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-005",
+                "stage": "draft",
+                "order_id": 6,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    11,
+                    12
+                ],
+                "product_ids": [
+                    11,
+                    12
+                ],
+                "warehouse_id": 6,
+                "linked_invoices": [
+                    {
+                        "rowid": "10",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "10.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 10,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "18",
+                            "fk_product": "11",
+                            "qty": "1",
+                            "fk_parent_line": null,
+                            "total_ht": "10.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        1,
+                        0
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "6",
+                        "sourcetype": "commande",
+                        "fk_target": "10",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "13",
+                        "fk_product": "11",
+                        "fk_entrepot": "6",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "14",
+                        "fk_product": "12",
+                        "fk_entrepot": "6",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-ROUTE-005",
+                "stage": "validated",
+                "order_id": 6,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    11,
+                    12
+                ],
+                "product_ids": [
+                    11,
+                    12
+                ],
+                "warehouse_id": 6,
+                "linked_invoices": [
+                    {
+                        "rowid": "10",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "10.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 10,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "18",
+                            "fk_product": "11",
+                            "qty": "1",
+                            "fk_parent_line": null,
+                            "total_ht": "10.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        1,
+                        0
+                    ],
+                    "validated": [
+                        1,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    4,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "6",
+                        "sourcetype": "commande",
+                        "fk_target": "10",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "13",
+                        "fk_product": "11",
+                        "fk_entrepot": "6",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "14",
+                        "fk_product": "12",
+                        "fk_entrepot": "6",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-STOCK-order",
+                "stage": "draft",
+                "order_id": 7,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    13,
+                    14
+                ],
+                "product_ids": [
+                    13,
+                    14
+                ],
+                "warehouse_id": 7,
+                "linked_invoices": [
+                    {
+                        "rowid": "11",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 11,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "19",
+                            "fk_product": "13",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "20",
+                            "fk_product": "14",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "7",
+                        "sourcetype": "commande",
+                        "fk_target": "11",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    5,
+                    7
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "15",
+                        "fk_product": "13",
+                        "fk_entrepot": "7",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "16",
+                        "fk_product": "14",
+                        "fk_entrepot": "7",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "17",
+                        "fk_product": "13",
+                        "fk_entrepot": "7",
+                        "value": "-5",
+                        "type_mouvement": "2",
+                        "fk_origin": "7",
+                        "origintype": "commande"
+                    },
+                    {
+                        "rowid": "18",
+                        "fk_product": "14",
+                        "fk_entrepot": "7",
+                        "value": "-3",
+                        "type_mouvement": "2",
+                        "fk_origin": "7",
+                        "origintype": "commande"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-STOCK-order",
+                "stage": "validated",
+                "order_id": 7,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    13,
+                    14
+                ],
+                "product_ids": [
+                    13,
+                    14
+                ],
+                "warehouse_id": 7,
+                "linked_invoices": [
+                    {
+                        "rowid": "11",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 11,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "19",
+                            "fk_product": "13",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "20",
+                            "fk_product": "14",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        5,
+                        3
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    0,
+                    0
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "7",
+                        "sourcetype": "commande",
+                        "fk_target": "11",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    5,
+                    7
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "15",
+                        "fk_product": "13",
+                        "fk_entrepot": "7",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "16",
+                        "fk_product": "14",
+                        "fk_entrepot": "7",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "17",
+                        "fk_product": "13",
+                        "fk_entrepot": "7",
+                        "value": "-5",
+                        "type_mouvement": "2",
+                        "fk_origin": "7",
+                        "origintype": "commande"
+                    },
+                    {
+                        "rowid": "18",
+                        "fk_product": "14",
+                        "fk_entrepot": "7",
+                        "value": "-3",
+                        "type_mouvement": "2",
+                        "fk_origin": "7",
+                        "origintype": "commande"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-STOCK-invoice",
+                "stage": "draft",
+                "order_id": 8,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    15,
+                    16
+                ],
+                "product_ids": [
+                    15,
+                    16
+                ],
+                "warehouse_id": 8,
+                "linked_invoices": [
+                    {
+                        "rowid": "12",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 12,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "21",
+                            "fk_product": "15",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "22",
+                            "fk_product": "16",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "8",
+                        "sourcetype": "commande",
+                        "fk_target": "12",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "19",
+                        "fk_product": "15",
+                        "fk_entrepot": "8",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "20",
+                        "fk_product": "16",
+                        "fk_entrepot": "8",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-STOCK-invoice",
+                "stage": "validated",
+                "order_id": 8,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    15,
+                    16
+                ],
+                "product_ids": [
+                    15,
+                    16
+                ],
+                "warehouse_id": 8,
+                "linked_invoices": [
+                    {
+                        "rowid": "12",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 12,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "21",
+                            "fk_product": "15",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "22",
+                            "fk_product": "16",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        5,
+                        3
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    0,
+                    0
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "8",
+                        "sourcetype": "commande",
+                        "fk_target": "12",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    5,
+                    7
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "19",
+                        "fk_product": "15",
+                        "fk_entrepot": "8",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "20",
+                        "fk_product": "16",
+                        "fk_entrepot": "8",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "21",
+                        "fk_product": "15",
+                        "fk_entrepot": "8",
+                        "value": "-5",
+                        "type_mouvement": "2",
+                        "fk_origin": "12",
+                        "origintype": "facture"
+                    },
+                    {
+                        "rowid": "22",
+                        "fk_product": "16",
+                        "fk_entrepot": "8",
+                        "value": "-3",
+                        "type_mouvement": "2",
+                        "fk_origin": "12",
+                        "origintype": "facture"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-STOCK-warehouse",
+                "stage": "validated",
+                "order_id": 9,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    17,
+                    18
+                ],
+                "product_ids": [
+                    17,
+                    18
+                ],
+                "warehouse_id": 9,
+                "linked_invoices": [
+                    {
+                        "rowid": "13",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 13,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "23",
+                            "fk_product": "17",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "24",
+                            "fk_product": "18",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        5,
+                        3
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    0,
+                    0
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "9",
+                        "sourcetype": "commande",
+                        "fk_target": "13",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "23",
+                        "fk_product": "17",
+                        "fk_entrepot": "9",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "24",
+                        "fk_product": "18",
+                        "fk_entrepot": "9",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-STOCK-combined",
+                "stage": "draft",
+                "order_id": 10,
+                "order_status": 2,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    19,
+                    20
+                ],
+                "product_ids": [
+                    19,
+                    20
+                ],
+                "warehouse_id": 10,
+                "linked_invoices": [
+                    {
+                        "rowid": "14",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "30.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 14,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "25",
+                            "fk_product": "19",
+                            "qty": "2",
+                            "fk_parent_line": null,
+                            "total_ht": "20.00000000"
+                        },
+                        {
+                            "rowid": "26",
+                            "fk_product": "20",
+                            "qty": "1",
+                            "fk_parent_line": null,
+                            "total_ht": "10.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        2,
+                        1
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": 2,
+                "shipment_status": 1,
+                "shipment_billed": 0,
+                "links": [
+                    {
+                        "fk_source": "10",
+                        "sourcetype": "commande",
+                        "fk_target": "2",
+                        "targettype": "shipping"
+                    },
+                    {
+                        "fk_source": "2",
+                        "sourcetype": "shipping",
+                        "fk_target": "14",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "10",
+                        "sourcetype": "commande",
+                        "fk_target": "14",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    8,
+                    9
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "25",
+                        "fk_product": "19",
+                        "fk_entrepot": "10",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "26",
+                        "fk_product": "20",
+                        "fk_entrepot": "10",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "27",
+                        "fk_product": "19",
+                        "fk_entrepot": "10",
+                        "value": "-2",
+                        "type_mouvement": "2",
+                        "fk_origin": "2",
+                        "origintype": "shipping"
+                    },
+                    {
+                        "rowid": "28",
+                        "fk_product": "20",
+                        "fk_entrepot": "10",
+                        "value": "-1",
+                        "type_mouvement": "2",
+                        "fk_origin": "2",
+                        "origintype": "shipping"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-STOCK-combined",
+                "stage": "validated",
+                "order_id": 10,
+                "order_status": 2,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    19,
+                    20
+                ],
+                "product_ids": [
+                    19,
+                    20
+                ],
+                "warehouse_id": 10,
+                "linked_invoices": [
+                    {
+                        "rowid": "14",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "30.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 14,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "25",
+                            "fk_product": "19",
+                            "qty": "2",
+                            "fk_parent_line": null,
+                            "total_ht": "20.00000000"
+                        },
+                        {
+                            "rowid": "26",
+                            "fk_product": "20",
+                            "qty": "1",
+                            "fk_parent_line": null,
+                            "total_ht": "10.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        2,
+                        1
+                    ],
+                    "validated": [
+                        2,
+                        1
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    3,
+                    2
+                ],
+                "shipment_id": 2,
+                "shipment_status": 1,
+                "shipment_billed": 0,
+                "links": [
+                    {
+                        "fk_source": "10",
+                        "sourcetype": "commande",
+                        "fk_target": "2",
+                        "targettype": "shipping"
+                    },
+                    {
+                        "fk_source": "2",
+                        "sourcetype": "shipping",
+                        "fk_target": "14",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "10",
+                        "sourcetype": "commande",
+                        "fk_target": "14",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    6,
+                    8
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "25",
+                        "fk_product": "19",
+                        "fk_entrepot": "10",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "26",
+                        "fk_product": "20",
+                        "fk_entrepot": "10",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "27",
+                        "fk_product": "19",
+                        "fk_entrepot": "10",
+                        "value": "-2",
+                        "type_mouvement": "2",
+                        "fk_origin": "2",
+                        "origintype": "shipping"
+                    },
+                    {
+                        "rowid": "28",
+                        "fk_product": "20",
+                        "fk_entrepot": "10",
+                        "value": "-1",
+                        "type_mouvement": "2",
+                        "fk_origin": "2",
+                        "origintype": "shipping"
+                    },
+                    {
+                        "rowid": "29",
+                        "fk_product": "19",
+                        "fk_entrepot": "10",
+                        "value": "-2",
+                        "type_mouvement": "2",
+                        "fk_origin": "14",
+                        "origintype": "facture"
+                    },
+                    {
+                        "rowid": "30",
+                        "fk_product": "20",
+                        "fk_entrepot": "10",
+                        "value": "-1",
+                        "type_mouvement": "2",
+                        "fk_origin": "14",
+                        "origintype": "facture"
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-PERM-001",
+                "stage": "reader_denied",
+                "order_id": 11,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    21,
+                    22
+                ],
+                "product_ids": [
+                    21,
+                    22
+                ],
+                "warehouse_id": 11,
+                "linked_invoices": [
+                    {
+                        "rowid": "15",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 15,
+                    "status": 0,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "27",
+                            "fk_product": "21",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "28",
+                            "fk_product": "22",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        5,
+                        3
+                    ],
+                    "validated": [
+                        0,
+                        0
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    5,
+                    3
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "11",
+                        "sourcetype": "commande",
+                        "fk_target": "15",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "31",
+                        "fk_product": "21",
+                        "fk_entrepot": "11",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "32",
+                        "fk_product": "22",
+                        "fk_entrepot": "11",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            },
+            {
+                "scenario": "INV-PERM-001",
+                "stage": "creator_validated",
+                "order_id": 11,
+                "order_status": 1,
+                "order_billed": 0,
+                "proposal_id": null,
+                "order_line_ids": [
+                    21,
+                    22
+                ],
+                "product_ids": [
+                    21,
+                    22
+                ],
+                "warehouse_id": 11,
+                "linked_invoices": [
+                    {
+                        "rowid": "15",
+                        "fk_statut": "0",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    },
+                    {
+                        "rowid": "16",
+                        "fk_statut": "1",
+                        "paye": "0",
+                        "total_ht": "80.00000000"
+                    }
+                ],
+                "invoice": {
+                    "id": 16,
+                    "status": 1,
+                    "paid": 0,
+                    "lines": [
+                        {
+                            "rowid": "29",
+                            "fk_product": "21",
+                            "qty": "5",
+                            "fk_parent_line": null,
+                            "total_ht": "50.00000000"
+                        },
+                        {
+                            "rowid": "30",
+                            "fk_product": "22",
+                            "qty": "3",
+                            "fk_parent_line": null,
+                            "total_ht": "30.00000000"
+                        }
+                    ]
+                },
+                "invoiced_quantities": {
+                    "all": [
+                        10,
+                        6
+                    ],
+                    "validated": [
+                        5,
+                        3
+                    ]
+                },
+                "arithmetic_remaining_validated": [
+                    0,
+                    0
+                ],
+                "shipment_id": null,
+                "shipment_status": null,
+                "shipment_billed": null,
+                "links": [
+                    {
+                        "fk_source": "11",
+                        "sourcetype": "commande",
+                        "fk_target": "15",
+                        "targettype": "facture"
+                    },
+                    {
+                        "fk_source": "11",
+                        "sourcetype": "commande",
+                        "fk_target": "16",
+                        "targettype": "facture"
+                    }
+                ],
+                "stock": [
+                    10,
+                    10
+                ],
+                "stock_movements": [
+                    {
+                        "rowid": "31",
+                        "fk_product": "21",
+                        "fk_entrepot": "11",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    },
+                    {
+                        "rowid": "32",
+                        "fk_product": "22",
+                        "fk_entrepot": "11",
+                        "value": "10",
+                        "type_mouvement": "3",
+                        "fk_origin": "0",
+                        "origintype": ""
+                    }
+                ]
+            }
+        ],
+        "configurations": [
+            {
+                "mode": "none",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 0
+                }
+            },
+            {
+                "mode": "shipment",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 1,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 0
+                }
+            },
+            {
+                "mode": "none",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 0
+                }
+            },
+            {
+                "mode": "order",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 1,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 0
+                }
+            },
+            {
+                "mode": "invoice",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 1
+                }
+            },
+            {
+                "mode": "invoice",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 1
+                }
+            },
+            {
+                "mode": "combined",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 1,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 1
+                }
+            },
+            {
+                "mode": "none",
+                "flags": {
+                    "STOCK_CALCULATE_ON_VALIDATE_ORDER": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT": 0,
+                    "STOCK_CALCULATE_ON_SHIPMENT_CLOSE": 0,
+                    "STOCK_CALCULATE_ON_BILL": 0
+                }
+            }
+        ],
+        "context": {
+            "version": "24.0.1",
+            "entity": 1,
+            "language": "es_ES",
+            "currency": "EUR",
+            "country": "4:ES:Spain",
+            "timezone": "Europe/Madrid",
+            "workflow": false,
+            "advanced_permissions": false
+        }
+    },
+    "cleanup_verified": true
+}

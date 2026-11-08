@@ -74,3 +74,17 @@
 See [ORDER-SHIPMENT-REF-001](../characterization/ORDER-SHIPMENT-REF-001-order-to-shipment.md)
 for conditions and inactive workflow/invoicing variants. These observations do
 not establish Alixar policy.
+
+## INVOICE-ROUTES-REF-001
+
+| Category | Concrete boundary | Evidence |
+|---|---|---|
+| Modules | Facture added only in the ephemeral invoicing composition; Workflow inactive | `DEMOSTRADO` module checks; dependency descriptions source-derived |
+| Configuration | Basic permissions, CreateBill UI switches and order/shipment/invoice stock timing | `DEMOSTRADO` for configured run; unexecuted switch combinations `INFERIDO` |
+| Authorization | Generic/order-conversion/validation API and invoice class validation | `DEMOSTRADO` read-only denial and basic creator success; advanced rights `PENDIENTE` |
+| Events/hooks | `BILL_CREATE`, `BILL_VALIDATE`, other transitions and `createFrom` hooks | `INFERIDO` dispatch sites; no event spy |
+| Stock operations | Signed movement rows with `commande`, `shipping`, `facture` origins | `DEMOSTRADO` for isolated timings, warehouse condition and one overlap case |
+| Relationships | Order/shipment invoice links; explicit generic API links | `DEMOSTRADO` for flat stockable fixtures; universal line-level correspondence `PENDIENTE` |
+
+See [INVOICE-ROUTES-REF-001](../characterization/INVOICE-ROUTES-REF-001-invoicing-routes.md)
+for stable route/scenario IDs and unexecuted automatic/grouped candidates.
