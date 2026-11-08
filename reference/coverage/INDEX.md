@@ -5,6 +5,7 @@
 | ID | Name | Profile | State | Modules | API | UI | Persistence | Business Rules | Source Files | Ext. Points | Evidence | Updated |
 |----|------|---------|-------|---------|-----|----|-------------|----------------|--------------|-------------|----------|---------|
 | CONTACT-REF-001 | Basic contact lifecycle | baseline-ES | observed | API, SOCIETE, USER | ✓ | ✓ | ✓ | ✓ | 12 | 8 | API, DB, UI, Source | 2026-10-12 |
+| INVOICE-ROUTES-REF-001 | Customer invoice creation from orders/shipments | invoicing-ES (ephemeral) | partial | API, SOCIETE, PROPALE, COMMANDE, EXPEDITION, PRODUCT, STOCK, FACTURE | partial | HTTP forms | partial | partial | 10 pinned hashes | 6 categories | Classes, API, DB, UI(HTTP), Config | 2026-11-08 |
 | THIRDPARTY-REF-001 | Basic third party lifecycle | baseline-ES | observed | API, SOCIETE, USER | ✓ | partial | ✓ | ✓ | 14 | 8 | API, DB, UI(source), Source, Swagger, Config | 2026-10-26 |
 | PROPAL-ORDER-REF-001 | Accepted proposal to customer order | commercial-ES | partial | API, SOCIETE, PROPALE, COMMANDE, WORKFLOW | ✓ | partial | ✓ | ✓ | 10 | 6 | API, DB, UI(HTTP), Source, Profile | 2026-11-07 |
 | ORDER-SHIPMENT-REF-001 | Customer order to successive shipments | shipping-ES (ephemeral) | partial | API, SOCIETE, COMMANDE, EXPEDITION, PRODUCT, STOCK | partial | source | partial | partial | 10 | 6 | Classes, API, DB, Source hashes; full/successive/repeated close | 2026-11-08 |

@@ -166,3 +166,13 @@ for reproducible assertions, observations and pending variants.
 The corrected evidence also covers one complete shipment and post-repeat-close
 stock/movement observations. Historical observations remain preserved separately;
 positive shipping mutations are class calls with an administrator, not API tests.
+
+## Related invoice-route pilot
+
+`./bin/check-invoicing` reuses the same Compose infrastructure in an independent,
+disposable `invoicing-ES` project, enabling Facture and the source-document/stock
+modules only there, with Workflow disabled. It characterizes real UI HTTP,
+API and internal-class entry boundaries, partial/repeated quantities and stock
+attribution. See [INVOICE-ROUTES-REF-001](../reference/characterization/INVOICE-ROUTES-REF-001-invoicing-routes.md).
+Persistent profiles and baseline artifacts are unchanged. Only structured JSON
+evidence is retained; raw work logs are not added to Git.
