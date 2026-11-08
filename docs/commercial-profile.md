@@ -154,3 +154,15 @@ online signature, concurrency, multicurrency or rollback behavior.
 
 `./bin/check` remains the full baseline validation authority. The commercial
 check supplements it and does not replace or change baseline evidence.
+
+## Related shipping pilot
+
+`./bin/check-shipping` reuses this Compose file in a separate, disposable
+`shipping-ES` project and enables API, Societe, Commande, Expedition, Product and
+Stock only for that invocation. It never starts or reconfigures the persistent
+commercial profile. It records partial/subsequent shipments and conditional stock
+effects; see [ORDER-SHIPMENT-REF-001](../reference/characterization/ORDER-SHIPMENT-REF-001-order-to-shipment.md)
+for reproducible assertions, observations and pending variants.
+The corrected evidence also covers one complete shipment and post-repeat-close
+stock/movement observations. Historical observations remain preserved separately;
+positive shipping mutations are class calls with an administrator, not API tests.

@@ -79,3 +79,17 @@ When recording a source trace in a characterization:
 | `htdocs/comm/propal/class/api_proposals.class.php` | PROPAL-ORDER-REF-001 | Proposal close API used by the controlled fixture |
 | `htdocs/commande/class/api_orders.class.php` | PROPAL-ORDER-REF-001 | `createfromproposal` API used to set up the duplicate guard |
 | `htdocs/core/ajax/onlineSign.php`, `htdocs/public/onlinesign/newonlinesign.php` | PROPAL-ORDER-REF-001 | Online-signature context; source-only evidence |
+
+## ORDER-SHIPMENT-REF-001
+
+Pinned-source trace and exact methods are recorded in
+[the characterization](../characterization/ORDER-SHIPMENT-REF-001-order-to-shipment.md#exact-source-trace-and-extension-points).
+Ten files cover shipment/order lifecycle, API and UI guards, product/warehouse
+stock operations, module dependencies and optional workflow effects. Source-only
+UI and event evidence remains separate from the executed class/API assertions.
+The [source hash manifest](../characterization/ORDER-SHIPMENT-REF-001-source-hashes.json)
+records ten Git-blob hashes at the pinned commit. The runner verifies each
+against the installed image and the
+[2026-11-08 capture](../characterization/ORDER-SHIPMENT-REF-001-observed-2026-11-08.json)
+retains both hashes. The characterization supplies exact upstream line links;
+matching hashes do not promote source-only UI/events to runtime evidence.

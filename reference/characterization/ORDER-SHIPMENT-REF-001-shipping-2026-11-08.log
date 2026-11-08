@@ -1,0 +1,505 @@
+Shipping profile project: dolibarr-reference-shipping-check-41230-1062
+ Network dolibarr-reference-shipping-check-41230-1062_dolibarr_net Creating
+ Network dolibarr-reference-shipping-check-41230-1062_dolibarr_net Creating
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_documents Creating
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_documents Creating
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_db_data Creating
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_db_data Creating
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_db_data Created
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_db_data Created
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_documents Created
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_documents Created
+ Network dolibarr-reference-shipping-check-41230-1062_dolibarr_net Created
+ Network dolibarr-reference-shipping-check-41230-1062_dolibarr_net Created
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Creating
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Created
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Creating
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Created
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Starting
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Started
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Waiting
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Healthy
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Starting
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Started
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Waiting
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Waiting
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Healthy
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Healthy
+PASS: asynchronous API/profile initialization completed
+PASS: ephemeral API key verified without disclosure
+META {"fixture_sha256":"734a346f40c98111a16c3e4625551810c064e4ed9a32bae56f6f8474b7f1e9b9","runner_sha256":"08dc9f7f22e1e77a7debf199bec9c52faa7b367ac7161276129e59fe828f56eb"}
+SOURCE {"path":"commande/card.php","expected_sha256":"79290a33f51d84e981321c702da9104662967c488ef71e120fbf2cf2d294b603","image_sha256":"79290a33f51d84e981321c702da9104662967c488ef71e120fbf2cf2d294b603","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"commande/class/commande.class.php","expected_sha256":"ac6f2d09636b42a816028a2ea10aa31742f687c77bb17c98d61329ffcff7fef0","image_sha256":"ac6f2d09636b42a816028a2ea10aa31742f687c77bb17c98d61329ffcff7fef0","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"core/modules/modExpedition.class.php","expected_sha256":"2df2808a62cd1e7ff89877c361a8f92f54375758f1b4ff89a1c34b1384dc090c","image_sha256":"2df2808a62cd1e7ff89877c361a8f92f54375758f1b4ff89a1c34b1384dc090c","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"core/triggers/interface_20_modWorkflow_WorkflowManager.class.php","expected_sha256":"a4dfa1760680e8eb3fa031c261e9c47e1738ef6bd0e3af9a03b6e46b754cfa01","image_sha256":"a4dfa1760680e8eb3fa031c261e9c47e1738ef6bd0e3af9a03b6e46b754cfa01","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"expedition/card.php","expected_sha256":"90f8ad7a7dde97fb435767fc3366d93ec68139cf73e07edd826947e69bf6e543","image_sha256":"90f8ad7a7dde97fb435767fc3366d93ec68139cf73e07edd826947e69bf6e543","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"expedition/class/api_shipments.class.php","expected_sha256":"3f22792255643b6fa5f1279d9a413bfdf49090d03134e97ba7d417552b521487","image_sha256":"3f22792255643b6fa5f1279d9a413bfdf49090d03134e97ba7d417552b521487","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"expedition/class/expedition.class.php","expected_sha256":"4ae78e9fc787da560d3946a460762f38ac1029808cbd05e1f793a4b90cc2e1ea","image_sha256":"4ae78e9fc787da560d3946a460762f38ac1029808cbd05e1f793a4b90cc2e1ea","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"product/class/product.class.php","expected_sha256":"772f09d416d3cbe4faf7d43f125fd6f80ef3db4821c231ab66065340c1a9b7d3","image_sha256":"772f09d416d3cbe4faf7d43f125fd6f80ef3db4821c231ab66065340c1a9b7d3","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"product/stock/class/entrepot.class.php","expected_sha256":"be5fc78e3a96c5b97faee03e8f5352874ae79fe91834eb20c4043fcf1954e9ec","image_sha256":"be5fc78e3a96c5b97faee03e8f5352874ae79fe91834eb20c4043fcf1954e9ec","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+SOURCE {"path":"product/stock/class/mouvementstock.class.php","expected_sha256":"589e70752300d487aadd4e65b7d8aa5b63cef25149816e7da5e2415e8bc508f1","image_sha256":"589e70752300d487aadd4e65b7d8aa5b63cef25149816e7da5e2415e8bc508f1","source_commit":"b7958385f00a92219f76a4dfea67dae93df97a25"}
+PASS: exact Dolibarr version
+PASS: initialized shipping-ES locale and company country
+PASS: module enabled api
+PASS: module enabled societe
+PASS: module enabled commande
+PASS: module enabled expedition
+PASS: module enabled product
+PASS: module enabled stock
+PASS: load administrator
+PASS: business fixture actor is administrator
+PASS: workflow and invoicing inactive
+CONTEXT {"version":"24.0.1","entity":1,"language":"es_ES","currency":"EUR","country":"4:ES:Spain","timezone":"Europe\/Madrid","business_actor":"administrator","positive_mutation_boundary":"internal classes","api_scope":"restricted reader GET and mutation denials"}
+PASS: set MAIN_USE_ADVANCED_PERMS=0
+PASS: set STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT=1
+PASS: set STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS=0
+PASS: set MAIN_DONT_SHIP_MORE_THAN_ORDERED=1
+PASS: set STOCK_SUPPORTS_SERVICES=0
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=1
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0
+PASS: create open warehouse validation
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+OBS {"scenario":"validation","stage":"order_validated","order_id":1,"order_status":1,"shipment_id":null,"shipment_status":null,"ordered":[5,3],"order_line_ids":[1,2],"warehouse_id":1,"quantities_by_min_status":{"-1":[0,0],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"1","fk_product":"1","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"2","fk_product":"2","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[],"origin_links":[]}
+PASS: order validation does not decrement stock
+PASS: warehouse required by addline for stockable product
+PASS: configured stock sufficiency rejects excess in warehouse
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"validation","stage":"partial_draft","order_id":1,"order_status":1,"shipment_id":1,"shipment_status":0,"ordered":[5,3],"order_line_ids":[1,2],"warehouse_id":1,"quantities_by_min_status":{"-1":[2,1],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"1","fk_product":"1","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"2","fk_product":"2","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"1","fk_entrepot":"1","qty":"2"},{"fk_elementdet":"2","fk_entrepot":"1","qty":"1"}],"origin_links":[{"fk_source":"1","sourcetype":"commande","fk_target":"1","targettype":"shipping"}]}
+PASS: draft is counted unfiltered but not as validated shipment or stock movement
+PASS: validate partial shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"validation","stage":"partial_validated","order_id":1,"order_status":2,"shipment_id":1,"shipment_status":1,"ordered":[5,3],"order_line_ids":[1,2],"warehouse_id":1,"quantities_by_min_status":{"-1":[2,1],"1":[2,1],"2":[0,0]},"remaining_validated":[3,2],"stock":[8,9],"movement_count":4,"stock_movements":[{"rowid":"1","fk_product":"1","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"2","fk_product":"2","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"3","fk_product":"1","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"4","fk_product":"2","fk_entrepot":"1","value":"-1","type_mouvement":"2","fk_origin":"1","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"1","fk_entrepot":"1","qty":"2"},{"fk_elementdet":"2","fk_entrepot":"1","qty":"1"}],"origin_links":[{"fk_source":"1","sourcetype":"commande","fk_target":"1","targettype":"shipping"}]}
+PASS: partial validation starts shipping and leaves quantities pending
+PASS: stock at partial validation follows selected timing
+PASS: close partial shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"validation","stage":"partial_closed","order_id":1,"order_status":2,"shipment_id":1,"shipment_status":2,"ordered":[5,3],"order_line_ids":[1,2],"warehouse_id":1,"quantities_by_min_status":{"-1":[2,1],"1":[2,1],"2":[2,1]},"remaining_validated":[3,2],"stock":[8,9],"movement_count":4,"stock_movements":[{"rowid":"1","fk_product":"1","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"2","fk_product":"2","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"3","fk_product":"1","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"4","fk_product":"2","fk_entrepot":"1","value":"-1","type_mouvement":"2","fk_origin":"1","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"1","fk_entrepot":"1","qty":"2"},{"fk_elementdet":"2","fk_entrepot":"1","qty":"1"}],"origin_links":[{"fk_source":"1","sourcetype":"commande","fk_target":"1","targettype":"shipping"}]}
+PASS: partial close does not close incomplete order
+PASS: stock at partial close follows selected timing
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: validate subsequent shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"validation","stage":"subsequent_validated","order_id":1,"order_status":2,"shipment_id":2,"shipment_status":1,"ordered":[5,3],"order_line_ids":[1,2],"warehouse_id":1,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[2,1]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":6,"stock_movements":[{"rowid":"1","fk_product":"1","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"2","fk_product":"2","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"3","fk_product":"1","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"4","fk_product":"2","fk_entrepot":"1","value":"-1","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"5","fk_product":"1","fk_entrepot":"1","value":"-3","type_mouvement":"2","fk_origin":"2","origintype":"shipping"},{"rowid":"6","fk_product":"2","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"2","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"1","fk_entrepot":"1","qty":"3"},{"fk_elementdet":"2","fk_entrepot":"1","qty":"2"}],"origin_links":[{"fk_source":"1","sourcetype":"commande","fk_target":"2","targettype":"shipping"}]}
+PASS: fully validated quantities alone do not close order
+PASS: subsequent validation stock timing
+PASS: close subsequent shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"validation","stage":"all_closed","order_id":1,"order_status":3,"shipment_id":2,"shipment_status":2,"ordered":[5,3],"order_line_ids":[1,2],"warehouse_id":1,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":6,"stock_movements":[{"rowid":"1","fk_product":"1","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"2","fk_product":"2","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"3","fk_product":"1","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"4","fk_product":"2","fk_entrepot":"1","value":"-1","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"5","fk_product":"1","fk_entrepot":"1","value":"-3","type_mouvement":"2","fk_origin":"2","origintype":"shipping"},{"rowid":"6","fk_product":"2","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"2","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"1","fk_entrepot":"1","qty":"3"},{"fk_elementdet":"2","fk_entrepot":"1","qty":"2"}],"origin_links":[{"fk_source":"1","sourcetype":"commande","fk_target":"2","targettype":"shipping"}]}
+PASS: all closed shipment quantities close order for authorized actor
+PASS: final stock and exact movement count; no double decrement
+PASS: already closed shipment is a no-op
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"validation","stage":"repeated_close","order_id":1,"order_status":3,"shipment_id":2,"shipment_status":2,"ordered":[5,3],"order_line_ids":[1,2],"warehouse_id":1,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":6,"stock_movements":[{"rowid":"1","fk_product":"1","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"2","fk_product":"2","fk_entrepot":"1","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"3","fk_product":"1","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"4","fk_product":"2","fk_entrepot":"1","value":"-1","type_mouvement":"2","fk_origin":"1","origintype":"shipping"},{"rowid":"5","fk_product":"1","fk_entrepot":"1","value":"-3","type_mouvement":"2","fk_origin":"2","origintype":"shipping"},{"rowid":"6","fk_product":"2","fk_entrepot":"1","value":"-2","type_mouvement":"2","fk_origin":"2","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"1","fk_entrepot":"1","qty":"3"},{"fk_elementdet":"2","fk_entrepot":"1","qty":"2"}],"origin_links":[{"fk_source":"1","sourcetype":"commande","fk_target":"2","targettype":"shipping"}]}
+PASS: repeated close preserves stock
+PASS: repeated close preserves movement_count
+PASS: repeated close preserves order_status
+PASS: repeated close preserves shipment_status
+PASS: repeated close preserves quantities_by_min_status
+PASS: repeated close preserves remaining_validated
+PASS: repeated close preserves shipment_lines
+PASS: repeated close preserves stock_movements
+PASS: repeated close preserves origin_links
+PASS: shipment line references source order line and warehouse
+PASS: shipment line references source order line and warehouse
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=1
+PASS: create open warehouse close
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+OBS {"scenario":"close","stage":"order_validated","order_id":2,"order_status":1,"shipment_id":null,"shipment_status":null,"ordered":[5,3],"order_line_ids":[3,4],"warehouse_id":2,"quantities_by_min_status":{"-1":[0,0],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"7","fk_product":"3","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"8","fk_product":"4","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[],"origin_links":[]}
+PASS: order validation does not decrement stock
+PASS: warehouse required by addline for stockable product
+PASS: configured stock sufficiency rejects excess in warehouse
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"close","stage":"partial_draft","order_id":2,"order_status":1,"shipment_id":3,"shipment_status":0,"ordered":[5,3],"order_line_ids":[3,4],"warehouse_id":2,"quantities_by_min_status":{"-1":[2,1],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"7","fk_product":"3","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"8","fk_product":"4","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"3","fk_entrepot":"2","qty":"2"},{"fk_elementdet":"4","fk_entrepot":"2","qty":"1"}],"origin_links":[{"fk_source":"2","sourcetype":"commande","fk_target":"3","targettype":"shipping"}]}
+PASS: draft is counted unfiltered but not as validated shipment or stock movement
+PASS: validate partial shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"close","stage":"partial_validated","order_id":2,"order_status":2,"shipment_id":3,"shipment_status":1,"ordered":[5,3],"order_line_ids":[3,4],"warehouse_id":2,"quantities_by_min_status":{"-1":[2,1],"1":[2,1],"2":[0,0]},"remaining_validated":[3,2],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"7","fk_product":"3","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"8","fk_product":"4","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"3","fk_entrepot":"2","qty":"2"},{"fk_elementdet":"4","fk_entrepot":"2","qty":"1"}],"origin_links":[{"fk_source":"2","sourcetype":"commande","fk_target":"3","targettype":"shipping"}]}
+PASS: partial validation starts shipping and leaves quantities pending
+PASS: stock at partial validation follows selected timing
+PASS: close partial shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"close","stage":"partial_closed","order_id":2,"order_status":2,"shipment_id":3,"shipment_status":2,"ordered":[5,3],"order_line_ids":[3,4],"warehouse_id":2,"quantities_by_min_status":{"-1":[2,1],"1":[2,1],"2":[2,1]},"remaining_validated":[3,2],"stock":[8,9],"movement_count":4,"stock_movements":[{"rowid":"7","fk_product":"3","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"8","fk_product":"4","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"9","fk_product":"3","fk_entrepot":"2","value":"-2","type_mouvement":"2","fk_origin":"3","origintype":"shipping"},{"rowid":"10","fk_product":"4","fk_entrepot":"2","value":"-1","type_mouvement":"2","fk_origin":"3","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"3","fk_entrepot":"2","qty":"2"},{"fk_elementdet":"4","fk_entrepot":"2","qty":"1"}],"origin_links":[{"fk_source":"2","sourcetype":"commande","fk_target":"3","targettype":"shipping"}]}
+PASS: partial close does not close incomplete order
+PASS: stock at partial close follows selected timing
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: validate subsequent shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"close","stage":"subsequent_validated","order_id":2,"order_status":2,"shipment_id":4,"shipment_status":1,"ordered":[5,3],"order_line_ids":[3,4],"warehouse_id":2,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[2,1]},"remaining_validated":[0,0],"stock":[8,9],"movement_count":4,"stock_movements":[{"rowid":"7","fk_product":"3","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"8","fk_product":"4","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"9","fk_product":"3","fk_entrepot":"2","value":"-2","type_mouvement":"2","fk_origin":"3","origintype":"shipping"},{"rowid":"10","fk_product":"4","fk_entrepot":"2","value":"-1","type_mouvement":"2","fk_origin":"3","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"3","fk_entrepot":"2","qty":"3"},{"fk_elementdet":"4","fk_entrepot":"2","qty":"2"}],"origin_links":[{"fk_source":"2","sourcetype":"commande","fk_target":"4","targettype":"shipping"}]}
+PASS: fully validated quantities alone do not close order
+PASS: subsequent validation stock timing
+PASS: close subsequent shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"close","stage":"all_closed","order_id":2,"order_status":3,"shipment_id":4,"shipment_status":2,"ordered":[5,3],"order_line_ids":[3,4],"warehouse_id":2,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":6,"stock_movements":[{"rowid":"7","fk_product":"3","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"8","fk_product":"4","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"9","fk_product":"3","fk_entrepot":"2","value":"-2","type_mouvement":"2","fk_origin":"3","origintype":"shipping"},{"rowid":"10","fk_product":"4","fk_entrepot":"2","value":"-1","type_mouvement":"2","fk_origin":"3","origintype":"shipping"},{"rowid":"11","fk_product":"3","fk_entrepot":"2","value":"-3","type_mouvement":"2","fk_origin":"4","origintype":"shipping"},{"rowid":"12","fk_product":"4","fk_entrepot":"2","value":"-2","type_mouvement":"2","fk_origin":"4","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"3","fk_entrepot":"2","qty":"3"},{"fk_elementdet":"4","fk_entrepot":"2","qty":"2"}],"origin_links":[{"fk_source":"2","sourcetype":"commande","fk_target":"4","targettype":"shipping"}]}
+PASS: all closed shipment quantities close order for authorized actor
+PASS: final stock and exact movement count; no double decrement
+PASS: already closed shipment is a no-op
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"close","stage":"repeated_close","order_id":2,"order_status":3,"shipment_id":4,"shipment_status":2,"ordered":[5,3],"order_line_ids":[3,4],"warehouse_id":2,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":6,"stock_movements":[{"rowid":"7","fk_product":"3","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"8","fk_product":"4","fk_entrepot":"2","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"9","fk_product":"3","fk_entrepot":"2","value":"-2","type_mouvement":"2","fk_origin":"3","origintype":"shipping"},{"rowid":"10","fk_product":"4","fk_entrepot":"2","value":"-1","type_mouvement":"2","fk_origin":"3","origintype":"shipping"},{"rowid":"11","fk_product":"3","fk_entrepot":"2","value":"-3","type_mouvement":"2","fk_origin":"4","origintype":"shipping"},{"rowid":"12","fk_product":"4","fk_entrepot":"2","value":"-2","type_mouvement":"2","fk_origin":"4","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"3","fk_entrepot":"2","qty":"3"},{"fk_elementdet":"4","fk_entrepot":"2","qty":"2"}],"origin_links":[{"fk_source":"2","sourcetype":"commande","fk_target":"4","targettype":"shipping"}]}
+PASS: repeated close preserves stock
+PASS: repeated close preserves movement_count
+PASS: repeated close preserves order_status
+PASS: repeated close preserves shipment_status
+PASS: repeated close preserves quantities_by_min_status
+PASS: repeated close preserves remaining_validated
+PASS: repeated close preserves shipment_lines
+PASS: repeated close preserves stock_movements
+PASS: repeated close preserves origin_links
+PASS: shipment line references source order line and warehouse
+PASS: shipment line references source order line and warehouse
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0
+PASS: create open warehouse none
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+OBS {"scenario":"none","stage":"order_validated","order_id":3,"order_status":1,"shipment_id":null,"shipment_status":null,"ordered":[5,3],"order_line_ids":[5,6],"warehouse_id":3,"quantities_by_min_status":{"-1":[0,0],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"13","fk_product":"5","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"14","fk_product":"6","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[],"origin_links":[]}
+PASS: order validation does not decrement stock
+PASS: warehouse required by addline for stockable product
+PASS: configured stock sufficiency rejects excess in warehouse
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"none","stage":"partial_draft","order_id":3,"order_status":1,"shipment_id":5,"shipment_status":0,"ordered":[5,3],"order_line_ids":[5,6],"warehouse_id":3,"quantities_by_min_status":{"-1":[2,1],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"13","fk_product":"5","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"14","fk_product":"6","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"5","fk_entrepot":"3","qty":"2"},{"fk_elementdet":"6","fk_entrepot":"3","qty":"1"}],"origin_links":[{"fk_source":"3","sourcetype":"commande","fk_target":"5","targettype":"shipping"}]}
+PASS: draft is counted unfiltered but not as validated shipment or stock movement
+PASS: validate partial shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"none","stage":"partial_validated","order_id":3,"order_status":2,"shipment_id":5,"shipment_status":1,"ordered":[5,3],"order_line_ids":[5,6],"warehouse_id":3,"quantities_by_min_status":{"-1":[2,1],"1":[2,1],"2":[0,0]},"remaining_validated":[3,2],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"13","fk_product":"5","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"14","fk_product":"6","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"5","fk_entrepot":"3","qty":"2"},{"fk_elementdet":"6","fk_entrepot":"3","qty":"1"}],"origin_links":[{"fk_source":"3","sourcetype":"commande","fk_target":"5","targettype":"shipping"}]}
+PASS: partial validation starts shipping and leaves quantities pending
+PASS: stock at partial validation follows selected timing
+PASS: close partial shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"none","stage":"partial_closed","order_id":3,"order_status":2,"shipment_id":5,"shipment_status":2,"ordered":[5,3],"order_line_ids":[5,6],"warehouse_id":3,"quantities_by_min_status":{"-1":[2,1],"1":[2,1],"2":[2,1]},"remaining_validated":[3,2],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"13","fk_product":"5","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"14","fk_product":"6","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"5","fk_entrepot":"3","qty":"2"},{"fk_elementdet":"6","fk_entrepot":"3","qty":"1"}],"origin_links":[{"fk_source":"3","sourcetype":"commande","fk_target":"5","targettype":"shipping"}]}
+PASS: partial close does not close incomplete order
+PASS: stock at partial close follows selected timing
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: validate subsequent shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"none","stage":"subsequent_validated","order_id":3,"order_status":2,"shipment_id":6,"shipment_status":1,"ordered":[5,3],"order_line_ids":[5,6],"warehouse_id":3,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[2,1]},"remaining_validated":[0,0],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"13","fk_product":"5","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"14","fk_product":"6","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"5","fk_entrepot":"3","qty":"3"},{"fk_elementdet":"6","fk_entrepot":"3","qty":"2"}],"origin_links":[{"fk_source":"3","sourcetype":"commande","fk_target":"6","targettype":"shipping"}]}
+PASS: fully validated quantities alone do not close order
+PASS: subsequent validation stock timing
+PASS: close subsequent shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"none","stage":"all_closed","order_id":3,"order_status":3,"shipment_id":6,"shipment_status":2,"ordered":[5,3],"order_line_ids":[5,6],"warehouse_id":3,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"13","fk_product":"5","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"14","fk_product":"6","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"5","fk_entrepot":"3","qty":"3"},{"fk_elementdet":"6","fk_entrepot":"3","qty":"2"}],"origin_links":[{"fk_source":"3","sourcetype":"commande","fk_target":"6","targettype":"shipping"}]}
+PASS: all closed shipment quantities close order for authorized actor
+PASS: final stock and exact movement count; no double decrement
+PASS: already closed shipment is a no-op
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"none","stage":"repeated_close","order_id":3,"order_status":3,"shipment_id":6,"shipment_status":2,"ordered":[5,3],"order_line_ids":[5,6],"warehouse_id":3,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"13","fk_product":"5","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"14","fk_product":"6","fk_entrepot":"3","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"5","fk_entrepot":"3","qty":"3"},{"fk_elementdet":"6","fk_entrepot":"3","qty":"2"}],"origin_links":[{"fk_source":"3","sourcetype":"commande","fk_target":"6","targettype":"shipping"}]}
+PASS: repeated close preserves stock
+PASS: repeated close preserves movement_count
+PASS: repeated close preserves order_status
+PASS: repeated close preserves shipment_status
+PASS: repeated close preserves quantities_by_min_status
+PASS: repeated close preserves remaining_validated
+PASS: repeated close preserves shipment_lines
+PASS: repeated close preserves stock_movements
+PASS: repeated close preserves origin_links
+PASS: shipment line references source order line and warehouse
+PASS: shipment line references source order line and warehouse
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=1
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0
+PASS: create open warehouse full
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"full","stage":"full_draft","order_id":4,"order_status":1,"shipment_id":7,"shipment_status":0,"ordered":[5,3],"order_line_ids":[7,8],"warehouse_id":4,"quantities_by_min_status":{"-1":[5,3],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":2,"stock_movements":[{"rowid":"15","fk_product":"7","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"16","fk_product":"8","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[{"fk_elementdet":"7","fk_entrepot":"4","qty":"5"},{"fk_elementdet":"8","fk_entrepot":"4","qty":"3"}],"origin_links":[{"fk_source":"4","sourcetype":"commande","fk_target":"7","targettype":"shipping"}]}
+PASS: single full draft has no stock decrement or validated quantity
+PASS: validate single full shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"full","stage":"full_validated","order_id":4,"order_status":2,"shipment_id":7,"shipment_status":1,"ordered":[5,3],"order_line_ids":[7,8],"warehouse_id":4,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[0,0]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":4,"stock_movements":[{"rowid":"15","fk_product":"7","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"16","fk_product":"8","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"17","fk_product":"7","fk_entrepot":"4","value":"-5","type_mouvement":"2","fk_origin":"7","origintype":"shipping"},{"rowid":"18","fk_product":"8","fk_entrepot":"4","value":"-3","type_mouvement":"2","fk_origin":"7","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"7","fk_entrepot":"4","qty":"5"},{"fk_elementdet":"8","fk_entrepot":"4","qty":"3"}],"origin_links":[{"fk_source":"4","sourcetype":"commande","fk_target":"7","targettype":"shipping"}]}
+PASS: single full validation ships all quantities but order remains in progress
+PASS: close single full shipment
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"full","stage":"full_closed","order_id":4,"order_status":3,"shipment_id":7,"shipment_status":2,"ordered":[5,3],"order_line_ids":[7,8],"warehouse_id":4,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":4,"stock_movements":[{"rowid":"15","fk_product":"7","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"16","fk_product":"8","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"17","fk_product":"7","fk_entrepot":"4","value":"-5","type_mouvement":"2","fk_origin":"7","origintype":"shipping"},{"rowid":"18","fk_product":"8","fk_entrepot":"4","value":"-3","type_mouvement":"2","fk_origin":"7","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"7","fk_entrepot":"4","qty":"5"},{"fk_elementdet":"8","fk_entrepot":"4","qty":"3"}],"origin_links":[{"fk_source":"4","sourcetype":"commande","fk_target":"7","targettype":"shipping"}]}
+PASS: single complete shipment closes order without duplicate stock decrease
+PASS: already closed shipment is a no-op
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"full","stage":"repeated_close","order_id":4,"order_status":3,"shipment_id":7,"shipment_status":2,"ordered":[5,3],"order_line_ids":[7,8],"warehouse_id":4,"quantities_by_min_status":{"-1":[5,3],"1":[5,3],"2":[5,3]},"remaining_validated":[0,0],"stock":[5,7],"movement_count":4,"stock_movements":[{"rowid":"15","fk_product":"7","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"16","fk_product":"8","fk_entrepot":"4","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"17","fk_product":"7","fk_entrepot":"4","value":"-5","type_mouvement":"2","fk_origin":"7","origintype":"shipping"},{"rowid":"18","fk_product":"8","fk_entrepot":"4","value":"-3","type_mouvement":"2","fk_origin":"7","origintype":"shipping"}],"shipment_lines":[{"fk_elementdet":"7","fk_entrepot":"4","qty":"5"},{"fk_elementdet":"8","fk_entrepot":"4","qty":"3"}],"origin_links":[{"fk_source":"4","sourcetype":"commande","fk_target":"7","targettype":"shipping"}]}
+PASS: repeated close preserves stock
+PASS: repeated close preserves movement_count
+PASS: repeated close preserves order_status
+PASS: repeated close preserves shipment_status
+PASS: repeated close preserves quantities_by_min_status
+PASS: repeated close preserves remaining_validated
+PASS: repeated close preserves shipment_lines
+PASS: repeated close preserves stock_movements
+PASS: repeated close preserves origin_links
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=1
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0
+PASS: create open warehouse cancel-validation-default
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: validate cancellation fixture
+PASS: cancel through official helper
+PASS: apply canceled status as UI action does
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"cancel-validation-default","stage":"canceled","order_id":5,"order_status":1,"shipment_id":8,"shipment_status":-1,"ordered":[5,3],"order_line_ids":[9,10],"warehouse_id":5,"quantities_by_min_status":{"-1":[0,0],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":6,"stock_movements":[{"rowid":"19","fk_product":"9","fk_entrepot":"5","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"20","fk_product":"10","fk_entrepot":"5","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"21","fk_product":"9","fk_entrepot":"5","value":"-2","type_mouvement":"2","fk_origin":"8","origintype":"shipping"},{"rowid":"22","fk_product":"10","fk_entrepot":"5","value":"-1","type_mouvement":"2","fk_origin":"8","origintype":"shipping"},{"rowid":"23","fk_product":"10","fk_entrepot":"5","value":"1","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"24","fk_product":"9","fk_entrepot":"5","value":"2","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[],"origin_links":[{"fk_source":"5","sourcetype":"commande","fk_target":"8","targettype":"shipping"}]}
+PASS: cancellation removes shipment lines, restores order validated status when none remain
+PASS: cancellation stock compensation depends on timing and explicit flag
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=1
+PASS: create open warehouse cancel-close-default
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: validate cancellation fixture
+PASS: close cancellation fixture
+PASS: cancel through official helper
+PASS: apply canceled status as UI action does
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"cancel-close-default","stage":"canceled","order_id":6,"order_status":1,"shipment_id":9,"shipment_status":-1,"ordered":[5,3],"order_line_ids":[11,12],"warehouse_id":6,"quantities_by_min_status":{"-1":[0,0],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[8,9],"movement_count":4,"stock_movements":[{"rowid":"25","fk_product":"11","fk_entrepot":"6","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"26","fk_product":"12","fk_entrepot":"6","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"27","fk_product":"11","fk_entrepot":"6","value":"-2","type_mouvement":"2","fk_origin":"9","origintype":"shipping"},{"rowid":"28","fk_product":"12","fk_entrepot":"6","value":"-1","type_mouvement":"2","fk_origin":"9","origintype":"shipping"}],"shipment_lines":[],"origin_links":[{"fk_source":"6","sourcetype":"commande","fk_target":"9","targettype":"shipping"}]}
+PASS: cancellation removes shipment lines, restores order validated status when none remain
+PASS: cancellation stock compensation depends on timing and explicit flag
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=1
+PASS: create open warehouse cancel-close-restore
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: validate cancellation fixture
+PASS: close cancellation fixture
+PASS: cancel through official helper
+PASS: apply canceled status as UI action does
+PASS: read quantities for status filter -1
+PASS: read quantities for status filter 1
+PASS: read quantities for status filter 2
+PASS: refresh observed shipment
+OBS {"scenario":"cancel-close-restore","stage":"canceled","order_id":7,"order_status":1,"shipment_id":10,"shipment_status":-1,"ordered":[5,3],"order_line_ids":[13,14],"warehouse_id":7,"quantities_by_min_status":{"-1":[0,0],"1":[0,0],"2":[0,0]},"remaining_validated":[5,3],"stock":[10,10],"movement_count":6,"stock_movements":[{"rowid":"29","fk_product":"13","fk_entrepot":"7","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"30","fk_product":"14","fk_entrepot":"7","value":"10","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"31","fk_product":"13","fk_entrepot":"7","value":"-2","type_mouvement":"2","fk_origin":"10","origintype":"shipping"},{"rowid":"32","fk_product":"14","fk_entrepot":"7","value":"-1","type_mouvement":"2","fk_origin":"10","origintype":"shipping"},{"rowid":"33","fk_product":"14","fk_entrepot":"7","value":"1","type_mouvement":"3","fk_origin":"0","origintype":""},{"rowid":"34","fk_product":"13","fk_entrepot":"7","value":"2","type_mouvement":"3","fk_origin":"0","origintype":""}],"shipment_lines":[],"origin_links":[{"fk_source":"7","sourcetype":"commande","fk_target":"10","targettype":"shipping"}]}
+PASS: cancellation removes shipment lines, restores order validated status when none remain
+PASS: cancellation stock compensation depends on timing and explicit flag
+PASS: set STOCK_CALCULATE_ON_VALIDATE_ORDER=0
+PASS: set STOCK_CALCULATE_ON_BILL=0
+PASS: set STOCK_CALCULATE_ON_SHIPMENT=1
+PASS: set STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0
+PASS: create open warehouse permissions
+PASS: create stockable product A
+PASS: receive ten units A
+PASS: create stockable product B
+PASS: receive ten units B
+PASS: create customer
+PASS: create draft order
+PASS: add product order line
+PASS: add product order line
+PASS: validate order
+PASS: refresh observed order
+PASS: prepare shipment line
+PASS: prepare shipment line
+PASS: persist linked draft shipment
+PASS: persisted order-to-shipment origin link
+PASS: create restricted user without default rights
+PASS: grant shipment read / customer visibility
+PASS: grant shipment read / customer visibility
+PASS: grant shipment read / customer visibility
+PASS: restricted user has no shipment creation permission
+PASS: provision restricted API key
+HTTP {"method":"GET","path":"\/shipments\/11","status":200}
+PASS: restricted API user can read shipment
+HTTP {"method":"POST","path":"\/shipments","status":403}
+PASS: API denies creation without shipment creation permission
+HTTP {"method":"POST","path":"\/shipments\/11\/validate","status":403}
+PASS: API denies validation without permission
+HTTP {"method":"POST","path":"\/shipments\/11\/close","status":403}
+PASS: API denies close without permission
+PASS: business-class validation also denies permission and leaves draft
+SHIPPING FUNCTIONAL CHECK PASSED
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Stopping
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Stopped
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Removing
+ Container dolibarr-reference-shipping-check-41230-1062-dolibarr-1 Removed
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Stopping
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Stopped
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Removing
+ Container dolibarr-reference-shipping-check-41230-1062-database-1 Removed
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_db_data Removing
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_documents Removing
+ Network dolibarr-reference-shipping-check-41230-1062_dolibarr_net Removing
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_db_data Removed
+ Volume dolibarr-reference-shipping-check-41230-1062_dolibarr_documents Removed
+ Network dolibarr-reference-shipping-check-41230-1062_dolibarr_net Removed
+SHIPPING VALIDATION PASSED (cleanup verified)

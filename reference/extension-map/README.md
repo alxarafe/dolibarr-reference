@@ -59,3 +59,18 @@
 | PROPAL-ORDER-REF-001 | Permission check | `comm/propal/card.php` | `commande/creer` | Controls manual "Add order" | Observed with basic restricted user |
 | PROPAL-ORDER-REF-001 | Online signature context | `core/ajax/onlineSign.php`, `public/onlinesign/newonlinesign.php` | `closedfromonlinesignature` | Assigns the technical user order-creation permission flag; not a creation gate | Source-only; full signature flow untested |
 | PROPAL-ORDER-REF-001 | Link table | `llx_element_element` | Proposal → order | Supports duplicate guard | Yes |
+
+## ORDER-SHIPMENT-REF-001
+
+| Category | Concrete boundary | Evidence |
+|---|---|---|
+| Module dependencies | Expedition depends on Commande; Stock depends on Product | `INFERIDO` from module descriptors; all enabled in runtime pilot |
+| Configuration | `STOCK_CALCULATE_ON_SHIPMENT`, `STOCK_CALCULATE_ON_SHIPMENT_CLOSE` and preparation guards | `DEMOSTRADO` for three mutually exclusive timing combinations |
+| Authorization | Shipment API creation/validation/close and class validation | `DEMOSTRADO` for basic restricted reader; UI guards `INFERIDO` |
+| Events | `SHIPPING_*`, `SHIPPING_ORDER_SHIPMENTONPROCESS`, `ORDER_CLOSE` dispatch sites | `INFERIDO`; no trigger spy |
+| Stock operations | Official movement methods on validate/close/cancel | `DEMOSTRADO` for stockable products and conditional compensation |
+| Relationships | Generic order origin link; source order-line and warehouse references | `DEMOSTRADO` for the sequential pilot |
+
+See [ORDER-SHIPMENT-REF-001](../characterization/ORDER-SHIPMENT-REF-001-order-to-shipment.md)
+for conditions and inactive workflow/invoicing variants. These observations do
+not establish Alixar policy.

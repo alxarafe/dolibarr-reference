@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# Reuse commercial Compose infrastructure in a disposable shipping-ES project.
+set -euo pipefail
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ENV_FILE="$PROJECT_ROOT/.env.commercial.example"
+COMPOSE_FILE="$PROJECT_ROOT/compose.commercial.yaml"
+set -a
+# shellcheck source=/dev/null
+source "$ENV_FILE"
+set +a
+export COMPOSE_PROJECT_NAME="dolibarr-reference-shipping-check-$$-$RANDOM"
+export ENABLE_MODULES=Api,Societe,Commande,Expedition,Product,Stock
+export DOLIBARR_REFERENCE_PORT=0
+IMAGE=dolibarr/dolibarr:24.0.1@sha256:125a5b6838e1b0f5c1e85678967026b1f72775bd3a08252b440c06799d2c19ce
+credentials=$(docker run --rm --network none --entrypoint php "$IMAGE" -r 'echo implode(" ", array_map(fn() => bin2hex(random_bytes(32)), range(1, 4)));')
+read -r DB_PASSWORD DB_ROOT_PASSWORD ADMIN_PASSWORD DOLIBARR_REFERENCE_API_KEY <<< "$credentials"
+unset credentials
+export DB_PASSWORD DB_ROOT_PASSWORD ADMIN_PASSWORD DOLIBARR_REFERENCE_API_KEY
+if [[ -z "$DB_PASSWORD" || -z "$DB_ROOT_PASSWORD" || -z "$ADMIN_PASSWORD" || -z "$DOLIBARR_REFERENCE_API_KEY" ]]; then
+    echo 'ERROR: Ephemeral credential generation failed' >&2
+    exit 1
+fi
+compose() { docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT_NAME" "$@"; }
+cleanup() {
+    local result=$?
+    if ! compose down -v --remove-orphans; then result=1; fi
+    local resource remaining flags
+    for resource in container network volume; do
+        flags=(-q)
+        [[ "$resource" != container ]] || flags=(-aq)
+        if ! remaining=$(docker "$resource" ls "${flags[@]}" --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME"); then
+            result=1
+        elif [[ -n "$remaining" ]]; then
+            echo "ERROR: Residual $resource in $COMPOSE_PROJECT_NAME" >&2
+            result=1
+        fi
+    done
+    if [[ $result == 0 ]]; then echo 'SHIPPING VALIDATION PASSED (cleanup verified)'; else echo 'SHIPPING VALIDATION FAILED' >&2; fi
+    exit "$result"
+}
+trap cleanup EXIT
+printf 'Shipping profile project: %s\n' "$COMPOSE_PROJECT_NAME"
+compose up -d --wait --wait-timeout 360
+WEB_CONTAINER=$(compose ps -q dolibarr)
+# Health alone does not attest completion of the asynchronous init scripts.
+# Wait for both completion markers without printing container logs or secrets.
+readonly INIT_TIMEOUT_SECONDS=60
+readonly INIT_POLL_SECONDS=2
+deadline=$((SECONDS + INIT_TIMEOUT_SECONDS))
+while :; do
+    init_logs=$(docker logs "$WEB_CONTAINER" 2>&1)
+    if [[ "$init_logs" == *'API key provisioned successfully'* && "$init_logs" == *'Profile configuration complete'* ]]; then
+        break
+    fi
+    unset init_logs
+    if (( SECONDS >= deadline )); then
+        echo 'ERROR: Shipping profile initialization did not finish' >&2
+        exit 1
+    fi
+    sleep "$INIT_POLL_SECONDS"
+done
+unset init_logs
+echo 'PASS: asynchronous API/profile initialization completed'
+docker exec "$WEB_CONTAINER" php -r '
+require "/var/www/html/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
+$admin = new User($db);
+if ($admin->fetch(0, getenv("DOLI_ADMIN_LOGIN")) <= 0 || !hash_equals(getenv("DOLIBARR_REFERENCE_API_KEY"), $admin->api_key)) {
+    fwrite(STDERR, "ERROR: Ephemeral API key initialization mismatch\n"); exit(1);
+}
+echo "PASS: ephemeral API key verified without disclosure\n";
+'
+printf 'META {"fixture_sha256":"%s","runner_sha256":"%s"}\n' \
+    "$(sha256sum "$PROJECT_ROOT/scripts/check-shipping.php" | cut -d ' ' -f 1)" \
+    "$(sha256sum "$PROJECT_ROOT/bin/check-shipping" | cut -d ' ' -f 1)"
+docker exec -i "$WEB_CONTAINER" php -r '
+$manifest = json_decode(stream_get_contents(STDIN), true, 512, JSON_THROW_ON_ERROR);
+foreach ($manifest["files"] as $source) {
+    $actual = hash_file("sha256", "/var/www/html/".$source["path"]);
+    if (!hash_equals($source["sha256"], $actual)) {
+        fwrite(STDERR, "ERROR: Pinned source hash mismatch: ".$source["path"]."\n"); exit(1);
+    }
+    echo "SOURCE ".json_encode(["path"=>$source["path"], "expected_sha256"=>$source["sha256"], "image_sha256"=>$actual, "source_commit"=>$manifest["source_commit"]], JSON_UNESCAPED_SLASHES)."\n";
+}
+' < "$PROJECT_ROOT/reference/characterization/ORDER-SHIPMENT-REF-001-source-hashes.json"
+docker exec -i "$WEB_CONTAINER" php < "$PROJECT_ROOT/scripts/check-shipping.php"
