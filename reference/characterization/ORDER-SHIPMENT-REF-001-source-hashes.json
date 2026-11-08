@@ -1,0 +1,46 @@
+{
+    "source_commit": "b7958385f00a92219f76a4dfea67dae93df97a25",
+    "source_repository": "https://github.com/Dolibarr/dolibarr",
+    "files": [
+        {
+            "path": "commande/card.php",
+            "sha256": "79290a33f51d84e981321c702da9104662967c488ef71e120fbf2cf2d294b603"
+        },
+        {
+            "path": "commande/class/commande.class.php",
+            "sha256": "ac6f2d09636b42a816028a2ea10aa31742f687c77bb17c98d61329ffcff7fef0"
+        },
+        {
+            "path": "core/modules/modExpedition.class.php",
+            "sha256": "2df2808a62cd1e7ff89877c361a8f92f54375758f1b4ff89a1c34b1384dc090c"
+        },
+        {
+            "path": "core/triggers/interface_20_modWorkflow_WorkflowManager.class.php",
+            "sha256": "a4dfa1760680e8eb3fa031c261e9c47e1738ef6bd0e3af9a03b6e46b754cfa01"
+        },
+        {
+            "path": "expedition/card.php",
+            "sha256": "90f8ad7a7dde97fb435767fc3366d93ec68139cf73e07edd826947e69bf6e543"
+        },
+        {
+            "path": "expedition/class/api_shipments.class.php",
+            "sha256": "3f22792255643b6fa5f1279d9a413bfdf49090d03134e97ba7d417552b521487"
+        },
+        {
+            "path": "expedition/class/expedition.class.php",
+            "sha256": "4ae78e9fc787da560d3946a460762f38ac1029808cbd05e1f793a4b90cc2e1ea"
+        },
+        {
+            "path": "product/class/product.class.php",
+            "sha256": "772f09d416d3cbe4faf7d43f125fd6f80ef3db4821c231ab66065340c1a9b7d3"
+        },
+        {
+            "path": "product/stock/class/entrepot.class.php",
+            "sha256": "be5fc78e3a96c5b97faee03e8f5352874ae79fe91834eb20c4043fcf1954e9ec"
+        },
+        {
+            "path": "product/stock/class/mouvementstock.class.php",
+            "sha256": "589e70752300d487aadd4e65b7d8aa5b63cef25149816e7da5e2415e8bc508f1"
+        }
+    ]
+}

@@ -1,0 +1,77 @@
+=== Dolibarr Reference Environment Validation ===
+Isolated project: dolibarr-reference-check
+Ephemeral API key: [masked by runner]
+
+1/10 Starting MariaDB...
+ Network dolibarr-reference-check_dolibarr_net Creating
+ Volume dolibarr-reference-check_dolibarr_db_data Creating
+ Volume dolibarr-reference-check_dolibarr_db_data Creating
+ Network dolibarr-reference-check_dolibarr_net Creating
+ Volume dolibarr-reference-check_dolibarr_db_data Created
+ Volume dolibarr-reference-check_dolibarr_db_data Created
+ Network dolibarr-reference-check_dolibarr_net Created
+ Network dolibarr-reference-check_dolibarr_net Created
+ Container dolibarr-reference-check-database-1 Creating
+ Container dolibarr-reference-check-database-1 Created
+ Container dolibarr-reference-check-database-1 Starting
+ Container dolibarr-reference-check-database-1 Started
+2/10 Waiting for database readiness...
+   Database healthy.
+3/10 Starting Dolibarr...
+ Container dolibarr-reference-check-database-1 Running
+ Volume dolibarr-reference-check_dolibarr_documents Creating
+ Volume dolibarr-reference-check_dolibarr_documents Creating
+ Volume dolibarr-reference-check_dolibarr_documents Created
+ Volume dolibarr-reference-check_dolibarr_documents Created
+ Container dolibarr-reference-check-dolibarr-1 Creating
+ Container dolibarr-reference-check-dolibarr-1 Created
+ Container dolibarr-reference-check-database-1 Waiting
+ Container dolibarr-reference-check-database-1 Healthy
+ Container dolibarr-reference-check-dolibarr-1 Starting
+ Container dolibarr-reference-check-dolibarr-1 Started
+4/10 Waiting for Dolibarr installation and web readiness...
+   Dolibarr healthy.
+4b/14 Waiting for API key provisioning...
+   API key provisioned.
+   Database prefix: llx_
+5/10 Verifying HTTP response...
+   HTTP 200 OK
+6/10 Verifying Dolibarr installation...
+   Version: 24.0.1
+7/10 Verifying company initialization...
+   Company: Alxarafe Reference
+8/10 Verifying REST API module...
+   REST API module: enabled
+   Third Parties module: enabled
+9/10 Testing authenticated REST API access...
+   Testing valid API key (expecting HTTP 200)...
+   HTTP 200 OK - Valid JSON, authenticated user: admin
+   Testing invalid API key (expecting HTTP 401)...
+   HTTP 401 Unauthorized - Correctly rejects invalid key
+
+   MariaDB: mariadb  Ver 15.1 Distrib 10.11.19-MariaDB, for debian-linux-gnu (x86_64) using  EditLine wrapper
+   Database charset: utf8mb4
+   Database collation: utf8mb4_general_ci
+10/14 Verifying Swagger endpoint...
+   Swagger endpoint reachable, valid JSON
+   Paths found: 106
+   /users/info present in descriptor
+11/14 Verifying technical capture generation...
+   Technical capture generated successfully
+12/14 Comparing with committed baseline...
+   swagger.json matches baseline
+   api-inventory.tsv matches baseline
+   technical-reference.json matches baseline
+
+13/14 Verifying no secrets in artifacts...
+   No secrets detected in generated artifacts
+
+14/14 All technical reference validations passed
+
+=== All Checks Passed ===
+Dolibarr 24.0.1 operational with REST API and Third Parties modules.
+REST authentication validated: valid key -> 200, invalid key -> 401
+Technical reference validated: Swagger descriptor, API inventory, and metadata match committed baseline
+
+--- Cleanup ---
+VALIDATION PASSED

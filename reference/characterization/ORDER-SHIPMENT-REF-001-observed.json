@@ -1,0 +1,1028 @@
+[
+  {
+    "scenario": "validation",
+    "stage": "order_validated",
+    "order_id": 1,
+    "order_status": 1,
+    "shipment_id": null,
+    "shipment_status": null,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      1,
+      2
+    ],
+    "warehouse_id": 1,
+    "quantities_by_min_status": {
+      "-1": [
+        0,
+        0
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": []
+  },
+  {
+    "scenario": "validation",
+    "stage": "partial_draft",
+    "order_id": 1,
+    "order_status": 1,
+    "shipment_id": 1,
+    "shipment_status": 0,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      1,
+      2
+    ],
+    "warehouse_id": 1,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "1",
+        "fk_entrepot": "1",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "2",
+        "fk_entrepot": "1",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "validation",
+    "stage": "partial_validated",
+    "order_id": 1,
+    "order_status": 2,
+    "shipment_id": 1,
+    "shipment_status": 1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      1,
+      2
+    ],
+    "warehouse_id": 1,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        2,
+        1
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      3,
+      2
+    ],
+    "stock": [
+      8,
+      9
+    ],
+    "movement_count": 4,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "1",
+        "fk_entrepot": "1",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "2",
+        "fk_entrepot": "1",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "validation",
+    "stage": "partial_closed",
+    "order_id": 1,
+    "order_status": 2,
+    "shipment_id": 1,
+    "shipment_status": 2,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      1,
+      2
+    ],
+    "warehouse_id": 1,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        2,
+        1
+      ],
+      "2": [
+        2,
+        1
+      ]
+    },
+    "remaining_validated": [
+      3,
+      2
+    ],
+    "stock": [
+      8,
+      9
+    ],
+    "movement_count": 4,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "1",
+        "fk_entrepot": "1",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "2",
+        "fk_entrepot": "1",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "validation",
+    "stage": "subsequent_validated",
+    "order_id": 1,
+    "order_status": 2,
+    "shipment_id": 2,
+    "shipment_status": 1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      1,
+      2
+    ],
+    "warehouse_id": 1,
+    "quantities_by_min_status": {
+      "-1": [
+        5,
+        3
+      ],
+      "1": [
+        5,
+        3
+      ],
+      "2": [
+        2,
+        1
+      ]
+    },
+    "remaining_validated": [
+      0,
+      0
+    ],
+    "stock": [
+      5,
+      7
+    ],
+    "movement_count": 6,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "1",
+        "fk_entrepot": "1",
+        "qty": "3"
+      },
+      {
+        "fk_elementdet": "2",
+        "fk_entrepot": "1",
+        "qty": "2"
+      }
+    ]
+  },
+  {
+    "scenario": "validation",
+    "stage": "all_closed",
+    "order_id": 1,
+    "order_status": 3,
+    "shipment_id": 2,
+    "shipment_status": 2,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      1,
+      2
+    ],
+    "warehouse_id": 1,
+    "quantities_by_min_status": {
+      "-1": [
+        5,
+        3
+      ],
+      "1": [
+        5,
+        3
+      ],
+      "2": [
+        5,
+        3
+      ]
+    },
+    "remaining_validated": [
+      0,
+      0
+    ],
+    "stock": [
+      5,
+      7
+    ],
+    "movement_count": 6,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "1",
+        "fk_entrepot": "1",
+        "qty": "3"
+      },
+      {
+        "fk_elementdet": "2",
+        "fk_entrepot": "1",
+        "qty": "2"
+      }
+    ]
+  },
+  {
+    "scenario": "close",
+    "stage": "order_validated",
+    "order_id": 2,
+    "order_status": 1,
+    "shipment_id": null,
+    "shipment_status": null,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      3,
+      4
+    ],
+    "warehouse_id": 2,
+    "quantities_by_min_status": {
+      "-1": [
+        0,
+        0
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": []
+  },
+  {
+    "scenario": "close",
+    "stage": "partial_draft",
+    "order_id": 2,
+    "order_status": 1,
+    "shipment_id": 3,
+    "shipment_status": 0,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      3,
+      4
+    ],
+    "warehouse_id": 2,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "3",
+        "fk_entrepot": "2",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "4",
+        "fk_entrepot": "2",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "close",
+    "stage": "partial_validated",
+    "order_id": 2,
+    "order_status": 2,
+    "shipment_id": 3,
+    "shipment_status": 1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      3,
+      4
+    ],
+    "warehouse_id": 2,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        2,
+        1
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      3,
+      2
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "3",
+        "fk_entrepot": "2",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "4",
+        "fk_entrepot": "2",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "close",
+    "stage": "partial_closed",
+    "order_id": 2,
+    "order_status": 2,
+    "shipment_id": 3,
+    "shipment_status": 2,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      3,
+      4
+    ],
+    "warehouse_id": 2,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        2,
+        1
+      ],
+      "2": [
+        2,
+        1
+      ]
+    },
+    "remaining_validated": [
+      3,
+      2
+    ],
+    "stock": [
+      8,
+      9
+    ],
+    "movement_count": 4,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "3",
+        "fk_entrepot": "2",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "4",
+        "fk_entrepot": "2",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "close",
+    "stage": "subsequent_validated",
+    "order_id": 2,
+    "order_status": 2,
+    "shipment_id": 4,
+    "shipment_status": 1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      3,
+      4
+    ],
+    "warehouse_id": 2,
+    "quantities_by_min_status": {
+      "-1": [
+        5,
+        3
+      ],
+      "1": [
+        5,
+        3
+      ],
+      "2": [
+        2,
+        1
+      ]
+    },
+    "remaining_validated": [
+      0,
+      0
+    ],
+    "stock": [
+      8,
+      9
+    ],
+    "movement_count": 4,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "3",
+        "fk_entrepot": "2",
+        "qty": "3"
+      },
+      {
+        "fk_elementdet": "4",
+        "fk_entrepot": "2",
+        "qty": "2"
+      }
+    ]
+  },
+  {
+    "scenario": "close",
+    "stage": "all_closed",
+    "order_id": 2,
+    "order_status": 3,
+    "shipment_id": 4,
+    "shipment_status": 2,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      3,
+      4
+    ],
+    "warehouse_id": 2,
+    "quantities_by_min_status": {
+      "-1": [
+        5,
+        3
+      ],
+      "1": [
+        5,
+        3
+      ],
+      "2": [
+        5,
+        3
+      ]
+    },
+    "remaining_validated": [
+      0,
+      0
+    ],
+    "stock": [
+      5,
+      7
+    ],
+    "movement_count": 6,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "3",
+        "fk_entrepot": "2",
+        "qty": "3"
+      },
+      {
+        "fk_elementdet": "4",
+        "fk_entrepot": "2",
+        "qty": "2"
+      }
+    ]
+  },
+  {
+    "scenario": "none",
+    "stage": "order_validated",
+    "order_id": 3,
+    "order_status": 1,
+    "shipment_id": null,
+    "shipment_status": null,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      5,
+      6
+    ],
+    "warehouse_id": 3,
+    "quantities_by_min_status": {
+      "-1": [
+        0,
+        0
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": []
+  },
+  {
+    "scenario": "none",
+    "stage": "partial_draft",
+    "order_id": 3,
+    "order_status": 1,
+    "shipment_id": 5,
+    "shipment_status": 0,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      5,
+      6
+    ],
+    "warehouse_id": 3,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "5",
+        "fk_entrepot": "3",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "6",
+        "fk_entrepot": "3",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "none",
+    "stage": "partial_validated",
+    "order_id": 3,
+    "order_status": 2,
+    "shipment_id": 5,
+    "shipment_status": 1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      5,
+      6
+    ],
+    "warehouse_id": 3,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        2,
+        1
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      3,
+      2
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "5",
+        "fk_entrepot": "3",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "6",
+        "fk_entrepot": "3",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "none",
+    "stage": "partial_closed",
+    "order_id": 3,
+    "order_status": 2,
+    "shipment_id": 5,
+    "shipment_status": 2,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      5,
+      6
+    ],
+    "warehouse_id": 3,
+    "quantities_by_min_status": {
+      "-1": [
+        2,
+        1
+      ],
+      "1": [
+        2,
+        1
+      ],
+      "2": [
+        2,
+        1
+      ]
+    },
+    "remaining_validated": [
+      3,
+      2
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "5",
+        "fk_entrepot": "3",
+        "qty": "2"
+      },
+      {
+        "fk_elementdet": "6",
+        "fk_entrepot": "3",
+        "qty": "1"
+      }
+    ]
+  },
+  {
+    "scenario": "none",
+    "stage": "subsequent_validated",
+    "order_id": 3,
+    "order_status": 2,
+    "shipment_id": 6,
+    "shipment_status": 1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      5,
+      6
+    ],
+    "warehouse_id": 3,
+    "quantities_by_min_status": {
+      "-1": [
+        5,
+        3
+      ],
+      "1": [
+        5,
+        3
+      ],
+      "2": [
+        2,
+        1
+      ]
+    },
+    "remaining_validated": [
+      0,
+      0
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "5",
+        "fk_entrepot": "3",
+        "qty": "3"
+      },
+      {
+        "fk_elementdet": "6",
+        "fk_entrepot": "3",
+        "qty": "2"
+      }
+    ]
+  },
+  {
+    "scenario": "none",
+    "stage": "all_closed",
+    "order_id": 3,
+    "order_status": 3,
+    "shipment_id": 6,
+    "shipment_status": 2,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      5,
+      6
+    ],
+    "warehouse_id": 3,
+    "quantities_by_min_status": {
+      "-1": [
+        5,
+        3
+      ],
+      "1": [
+        5,
+        3
+      ],
+      "2": [
+        5,
+        3
+      ]
+    },
+    "remaining_validated": [
+      0,
+      0
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 2,
+    "shipment_lines": [
+      {
+        "fk_elementdet": "5",
+        "fk_entrepot": "3",
+        "qty": "3"
+      },
+      {
+        "fk_elementdet": "6",
+        "fk_entrepot": "3",
+        "qty": "2"
+      }
+    ]
+  },
+  {
+    "scenario": "cancel-validation-default",
+    "stage": "canceled",
+    "order_id": 4,
+    "order_status": 1,
+    "shipment_id": 7,
+    "shipment_status": -1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      7,
+      8
+    ],
+    "warehouse_id": 4,
+    "quantities_by_min_status": {
+      "-1": [
+        0,
+        0
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 6,
+    "shipment_lines": []
+  },
+  {
+    "scenario": "cancel-close-default",
+    "stage": "canceled",
+    "order_id": 5,
+    "order_status": 1,
+    "shipment_id": 8,
+    "shipment_status": -1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      9,
+      10
+    ],
+    "warehouse_id": 5,
+    "quantities_by_min_status": {
+      "-1": [
+        0,
+        0
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      8,
+      9
+    ],
+    "movement_count": 4,
+    "shipment_lines": []
+  },
+  {
+    "scenario": "cancel-close-restore",
+    "stage": "canceled",
+    "order_id": 6,
+    "order_status": 1,
+    "shipment_id": 9,
+    "shipment_status": -1,
+    "ordered": [
+      5,
+      3
+    ],
+    "order_line_ids": [
+      11,
+      12
+    ],
+    "warehouse_id": 6,
+    "quantities_by_min_status": {
+      "-1": [
+        0,
+        0
+      ],
+      "1": [
+        0,
+        0
+      ],
+      "2": [
+        0,
+        0
+      ]
+    },
+    "remaining_validated": [
+      5,
+      3
+    ],
+    "stock": [
+      10,
+      10
+    ],
+    "movement_count": 6,
+    "shipment_lines": []
+  }
+]
