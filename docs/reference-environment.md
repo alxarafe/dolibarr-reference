@@ -127,11 +127,30 @@ The reference environment captures a **deterministic, versioned technical contra
 
 ### Regeneration
 
+First select and inspect the existing `baseline-ES` environment and confirm its
+runtime configuration; see the [characterization quick start](../reference/characterization/QUICKSTART.md#2-select-and-inspect-the-environment).
+Regeneration does not normally require rebuilding the persistent laboratory.
+For an explicitly authorized baseline capture, inspect the lab, start it only if
+needed, then capture:
+
 ```bash
-./bin/reset
+./bin/status
+# Only if the selected baseline lab needs starting:
 ./bin/up
 ./bin/capture-technical
 ```
+
+`./bin/up` preserves existing volumes. **`./bin/reset` destroys the persistent
+laboratory's database and document volumes.** Use it only after an explicit
+human decision to destroy that data and reconstruct the selected persistent
+lab. It is not routine preparation for investigation, validation or capture.
+Never reset a lab merely to obtain a clean fixture.
+
+`./bin/capture-technical` reads the running baseline and overwrites the three
+technical artifacts in `reference/baseline/`. Regeneration requires explicit
+review of those changes; it is not an automatic response to validation drift.
+Use `./bin/check` for isolated comparison with the committed baseline when
+validation, rather than an artifact update, is intended.
 
 ### Drift Handling
 
@@ -160,9 +179,27 @@ This task does **not** design the Alixar API. It captures the Dolibarr contract 
 - **Pinned images** with SHA256 digests (Dolibarr 24.0.1, MariaDB 10.11.19)
 - **No `latest` tags** — ever
 - **Named volumes** managed by Docker (no host bind mounts for data)
-- **Isolated validation** — `bin/check` uses unique `COMPOSE_PROJECT_NAME`
+- **Isolated validation from normal profiles** — `bin/check` uses the fixed
+  `COMPOSE_PROJECT_NAME=dolibarr-reference-check`, separate from the normal
+  persistent profiles; the name is not unique per invocation
 - **Declarative configuration** — all via `.env` / `.env.example`
 - **Single validation authority** — `bin/check` (CI runs only this)
+
+`bin/check` also uses the fixed host port `48241`. Concurrent invocations are
+**not isolated from each other**: they share the project name, port and resource
+names, and one run's initial or exit cleanup can remove another run's containers,
+volumes or network. Do not run simultaneous checks against the same Docker
+resources. Concurrency is not a validated capability. See the
+[quick start's validation guidance](../reference/characterization/QUICKSTART.md#9-validate-and-preserve-evidence).
+
+### Pending independent technical improvement
+
+Evaluate per-invocation isolation of `bin/check` in a separate, explicitly
+approved technical task. The evaluation must cover project and resource names,
+host-port allocation, and cleanup ownership on success and failure, including
+concurrent runs. This is a pending evaluation, not an implemented solution or a
+validated concurrency guarantee; no script or configuration change is part of
+this documentation update.
 
 ## Database Charset/Collation Baseline (AUDIT-002)
 
